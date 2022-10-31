@@ -1,13 +1,13 @@
-package com.gameinn.user;
+package com.gameinn.game.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class UserServiceApplication {
+public class GameServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserServiceApplication.class, args);
+		SpringApplication.run(GameServiceApplication.class, args);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.gameinn.user.controller;
+package com.gameinn.user.service.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
