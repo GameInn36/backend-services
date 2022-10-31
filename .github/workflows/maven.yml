@@ -29,10 +29,10 @@ jobs:
       run: mvn clean install
 
     - name: Creating staging Directory
-    - run: mkdir staging
+      run: mkdir staging
     
     - name: Copying All Artifacts
-    - run: cp user-service/target/*.jar staging && cp game-service/target/*.jar staging && cp review-service/target/*.jar staging
+      run: cp user-service/target/*.jar staging && cp game-service/target/*.jar staging && cp review-service/target/*.jar staging
     
     - name: Uploading Artifact
       uses: actions/upload-artifact@v3
