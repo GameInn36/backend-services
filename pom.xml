@@ -14,9 +14,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>user-service</module>
-    <module>game-service</module>
-      <module>review-service</module>
+      <module>common-service-dependencies</module>
   </modules>
   <properties>
     <spring.cloud-version>Hoxton.RELEASE</spring.cloud-version>
@@ -33,7 +31,4 @@
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
-
-  </dependencies>
 </project>
