@@ -16,6 +16,7 @@
   <modules>
     <module>user-service</module>
     <module>game-service</module>
+      <module>review-service</module>
   </modules>
   <properties>
     <spring.cloud-version>Hoxton.RELEASE</spring.cloud-version>
