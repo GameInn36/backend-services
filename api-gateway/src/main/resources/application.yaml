@@ -1,0 +1,46 @@
+server:
+  port: 9000
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: USER-SERVICE
+                fallbackuri: forward:/userServiceFallBack
+        - id: GAME-SERVICE
+          uri: lb://GAME-SERVICE
+          predicates:
+            - Path=/game/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: GAME-SERVICE
+                fallbackuri: forward:/gameServiceFallBack
+        - id: REVIEW-SERVICE
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: REVIEW-SERVICE
+                fallbackuri: forward:/reviewServiceFallBack
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutMilliSeconds: 4000

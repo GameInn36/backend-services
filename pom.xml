@@ -16,9 +16,12 @@
   <modules>
       <module>common-service-dependencies</module>
       <module>api-gateway</module>
+      <module>service-registry</module>
+    <module>hystrix-dashboard</module>
+      <module>cloud-config-server</module>
   </modules>
   <properties>
-    <spring.cloud-version>Hoxton.RELEASE</spring.cloud-version>
+    <spring.cloud-version>2021.0.4</spring.cloud-version>
   </properties>
 
   <dependencies>
