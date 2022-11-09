@@ -3,9 +3,9 @@ package com.gameinn.game.service.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-
+@Document(collection = "games")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
