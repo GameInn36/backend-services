@@ -28,14 +28,14 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Creating staging Directory
-      run: mkdir staging
+#    - name: Creating staging Directory
+#      run: mkdir staging
     
-    - name: Copying All Artifacts
-      run: cp user-service/target/*.jar staging && cp game-service/target/*.jar staging && cp review-service/target/*.jar staging
-    
-    - name: Uploading Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: Package
-        path: staging
+#    - name: Copying All Artifacts
+#      run: cp user-service/target/*.jar staging && cp game-service/target/*.jar staging && cp review-service/target/*.jar staging
+
+#    - name: Uploading Artifact
+#      uses: actions/upload-artifact@v3
+#      with:
+#        name: Package
+#        path: staging
