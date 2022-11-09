@@ -12,23 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/review")
 public class ReviewRESTController {
+    private final ReviewRESTService reviewRESTService;
     @Autowired
-    private ReviewRESTService reviewRESTService;
-    @GetMapping("/")
-    public ArrayList<Review> getReviews()
-    {
-        return reviewRESTService.getReviews();
-    }
-
-    @GetMapping
-    public List<Review> getReviewsByGameId(@RequestParam("gameId") String gameId){
-        System.out.println("Controller: gameId=" + gameId);
-        return reviewRESTService.getReviewsByGameId(gameId);
-    }
-
-    @PostMapping("/")
-    public String addReview(@RequestBody Review review){
-        System.out.println("Controller: " +review.toString());
-        return reviewRESTService.addReview(review) ? "Success" : "Fail";
+    ReviewRESTController(ReviewRESTService reviewRESTService){
+        this.reviewRESTService = reviewRESTService;
     }
 }

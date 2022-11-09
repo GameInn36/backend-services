@@ -11,24 +11,19 @@ import java.util.ArrayList;
 
 @Service
 public class GameRESTService {
-    @Autowired
     private GameRepository gameRepository;
-
-    @Autowired
     private RestTemplate restTemplate;
-
-    public boolean addGame(Game game){
-        return gameRepository.addGame(game);
+    @Autowired
+    GameRESTService(GameRepository gameRepository, RestTemplate restTemplate){
+        this.gameRepository = gameRepository;
+        this.restTemplate = restTemplate;
     }
 
-    public ArrayList<Game> getGames(){
-        return gameRepository.getGames();
-    }
 
-    public ResponseTemplateVO GetGameById(String gameId){
+    /*public ResponseTemplateVO GetGameById(String gameId){
         ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
         responseTemplateVO.setGame(gameRepository.getGameById(gameId));
         responseTemplateVO.setReviews(restTemplate.getForObject("http://REVIEW-SERVICE/review?gameId=" + gameId,ArrayList.class));
         return responseTemplateVO;
-    }
+    }*/
 }

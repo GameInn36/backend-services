@@ -12,26 +12,16 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/game")
 public class GameRESTController {
+    private final GameRESTService gameRESTService;
+
     @Autowired
-    private GameRESTService gameRESTService;
-    @GetMapping("/")
-    public ArrayList<Game> getGames(){
-        return gameRESTService.getGames();
+    GameRESTController(GameRESTService gameRESTService){
+        this.gameRESTService = gameRESTService;
     }
 
-    @GetMapping("/{gameId}")
+    /*@GetMapping("/{gameId}")
     public ResponseTemplateVO getGameById(@PathVariable String gameId){
         System.out.println("Controller: " + gameId);
         return gameRESTService.GetGameById(gameId);
-    }
-
-    @PostMapping("/")
-    public String addGame(@RequestBody Game game){
-        if (gameRESTService.addGame(game)){
-            return "Game Successfully Added!";
-        }
-        else{
-            return "An error occurred while adding game.";
-        }
-    }
+    }*/
 }
