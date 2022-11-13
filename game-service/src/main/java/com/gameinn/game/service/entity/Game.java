@@ -1,22 +1,31 @@
 package com.gameinn.game.service.entity;
 
+import com.sun.istack.internal.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.Binary;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
 @Document(collection = "games")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Game {
+    @Id
     private String id;
     private String name;
-    /*private String info;
-    private String category;
+    @NotNull
+    private int year;
+    private Binary cover;
+    private String summary;
+    private String[] categories;
     private String studio;
-    private ArrayList<String> platforms;
+    private String[] platforms;
     private float vote;
     private int voteCount;
-    private String image;*/
+    private long releaseDate;
 }
