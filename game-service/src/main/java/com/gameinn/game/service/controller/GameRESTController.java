@@ -15,6 +15,10 @@ public class GameRESTController {
         this.gameRESTService = gameRESTService;
     }
 
+    @GetMapping("/")
+    String hello(){
+        return"Hello from GameService!";
+    }
     /*@GetMapping("/{gameId}")
     public ResponseTemplateVO getGameById(@PathVariable String gameId){
         System.out.println("Controller: " + gameId);
