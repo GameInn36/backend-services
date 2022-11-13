@@ -1,5 +1,6 @@
 package com.gameinn.review.service.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Review {
     @Id
     private String id;
-    private String gameId;
     private String userId;
+    private String gameId;
     private String context;
-    /*private int vote;
+    private int vote;
     private boolean voted;
     private int likeCount;
-    private long unixDate;*/
+    private long createdAt;
+    private long updatedAt;
 }
