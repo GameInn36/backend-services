@@ -12,6 +12,7 @@
         <module>../game-service</module>
         <module>../user-service</module>
         <module>../review-service</module>
+        <module>../authentication-service</module>
     </modules>
     <dependencies>
         <dependency>
@@ -67,6 +68,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
         </dependency>
     </dependencies>
 
