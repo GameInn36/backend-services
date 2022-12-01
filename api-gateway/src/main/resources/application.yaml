@@ -24,10 +24,10 @@ spring:
           predicates:
             - Path=/game/**
           filters:
-            - name: CircuitBreaker
-              args:
-                name: GAME-SERVICE
-                fallbackuri: forward:/gameServiceFallBack
+            #- name: CircuitBreaker
+            #  args:
+            #    name: GAME-SERVICE
+            #    fallbackuri: forward:/gameServiceFallBack
             - AuthenticationFilter
         - id: REVIEW-SERVICE
           uri: lb://REVIEW-SERVICE

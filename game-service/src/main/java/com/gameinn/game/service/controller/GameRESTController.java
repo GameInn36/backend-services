@@ -11,12 +11,12 @@ public class GameRESTController {
     private final GameRESTService gameRESTService;
 
     @Autowired
-    GameRESTController(GameRESTService gameRESTService){
+    public GameRESTController(GameRESTService gameRESTService){
         this.gameRESTService = gameRESTService;
     }
 
-    @GetMapping("/")
-    String hello(){
+    @GetMapping("/deneme")
+    public String hello(){
         return"Hello from GameService!";
     }
     /*@GetMapping("/{gameId}")
