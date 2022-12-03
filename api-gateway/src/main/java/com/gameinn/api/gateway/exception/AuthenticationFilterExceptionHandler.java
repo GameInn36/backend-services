@@ -13,18 +13,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<String> details = new ArrayList<>();
-        details.add(ex.getMessage());
-        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),"UNAUTHORIZED",details,exchange.getRequest().getPath().value());
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),"UNAUTHORIZED",ex.getMessage(),exchange.getRequest().getPath().value());
         byte[] bytes;
         try {
             bytes = objectMapper.writeValueAsBytes(error);
