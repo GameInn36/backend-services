@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -32,9 +30,7 @@ public class AuthenticationRESTController {
 
         AuthenticationStatus status = authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         if(!status.getIsAuthenticated()){
-            List<String> details = new ArrayList<>();
-            details.add(status.getMessage());
-            ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", details, "aa");
+            ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", status.getMessage(), "/auth/authenticate");
             return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
         }
         final String token = jwtTokenUtil.generateToken(authenticationRequest.getUsername());

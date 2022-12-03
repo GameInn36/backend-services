@@ -1,16 +1,10 @@
 package com.gameinn.api.gateway.config;
 
+import lombok.Getter;
 import org.springframework.context.annotation.Configuration;
+@Getter
 @Configuration
 public class JwtConfig {
     private final String secret = "mySecret";
     private final long validity = 20;
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public long getValidity() {
-        return validity;
-    }
 }

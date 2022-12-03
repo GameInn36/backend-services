@@ -3,6 +3,7 @@ package com.gameinn.api.gateway.exception;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gameinn.api.gateway.models.ErrorResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHandler {
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
@@ -32,6 +34,7 @@ public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHa
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        log.error("geldim");
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }
 }

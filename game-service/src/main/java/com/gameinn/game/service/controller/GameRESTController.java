@@ -15,7 +15,7 @@ public class GameRESTController {
         this.gameRESTService = gameRESTService;
     }
 
-    @GetMapping("/deneme")
+    @GetMapping("/")
     public String hello(){
         return"Hello from GameService!";
     }
