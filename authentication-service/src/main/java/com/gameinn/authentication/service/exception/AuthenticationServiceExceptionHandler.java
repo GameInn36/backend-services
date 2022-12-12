@@ -14,7 +14,13 @@ public class AuthenticationServiceExceptionHandler {
 
     @ExceptionHandler
     ResponseEntity<?> handle(FeignException exception){
-        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), exception.status(), "ERROR", exception.getMessage(), "/auth/*");
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), exception.status(), exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(error, HttpStatus.valueOf(exception.status()));
+    }
+
+    @ExceptionHandler
+    ResponseEntity<?> handle(InvalidUserNamePasswordException exception){
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), exception.getStatus(), exception.getClass().getSimpleName(), exception.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.valueOf(exception.getStatus()));
     }
 }

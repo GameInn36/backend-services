@@ -1,5 +1,6 @@
 package com.gameinn.authentication.service.controller;
 
+import com.gameinn.authentication.service.exception.InvalidUserNamePasswordException;
 import com.gameinn.authentication.service.feignClient.UserService;
 import com.gameinn.authentication.service.models.*;
 import com.gameinn.authentication.service.util.JwtTokenUtil;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
 
 @Slf4j
 @RestController
@@ -38,8 +37,7 @@ public class AuthenticationRESTController {
 
         AuthenticationStatus status = authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         if(!status.getIsAuthenticated()){
-            ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", status.getMessage(), "/auth/authenticate");
-            return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
+            throw new InvalidUserNamePasswordException(status.getMessage(),HttpStatus.UNAUTHORIZED.value());
         }
         final String token = jwtTokenUtil.generateToken(authenticationRequest.getEmail());
         return ResponseEntity.ok(new JwtResponse(token));

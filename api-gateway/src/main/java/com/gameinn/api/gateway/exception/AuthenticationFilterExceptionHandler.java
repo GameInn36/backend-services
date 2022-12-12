@@ -20,7 +20,7 @@ public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHa
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ObjectMapper objectMapper = new ObjectMapper();
-        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),"UNAUTHORIZED",ex.getMessage(),exchange.getRequest().getPath().value());
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),ex.getMessage(),exchange.getRequest().getPath().value());
         byte[] bytes;
         try {
             bytes = objectMapper.writeValueAsBytes(error);

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class User {
     private String userName;
     private String password;
     private String bio;
+    @Indexed(unique = true)
     private String email;
     private List<String> toPlayList;
     private List<String> followedFriends;
@@ -42,10 +44,10 @@ public class User {
 
     public static class UserBuilder{
         private String id;
-        private String userName;
-        private String password;
+        private final String userName;
+        private final String password;
         private String bio;
-        private String email;
+        private final String email;
         private List<String> toPlayList;
         private List<String> followedFriends;
         private List<String> favoriteGames;

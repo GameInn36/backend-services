@@ -13,7 +13,6 @@ import java.util.Date;
 public class ErrorResponseDTO implements Serializable {
     private Date timestamp;
     private int status;
-    private String error;
+    private String exception;
     private String message;
-    private String path;
 }
