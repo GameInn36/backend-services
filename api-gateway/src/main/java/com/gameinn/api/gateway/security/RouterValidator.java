@@ -13,7 +13,8 @@ import java.util.stream.Stream;
 public class RouterValidator {
 
     public static final List<String> openApiEndpoints = Stream.of(
-            "/auth/authenticate"
+            "/auth/authenticate",
+            "auth/register"
     ).collect(Collectors.toList());
 
     public Predicate<ServerHttpRequest> isSecured =

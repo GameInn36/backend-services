@@ -16,4 +16,17 @@
             <version>3.0.0</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>review-service</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
