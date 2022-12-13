@@ -34,4 +34,8 @@ public class UserRESTService {
     public User getUserByEmailAndPassword(UserDTO userDTO){
         return userRepository.findUserByEmailAndPassword(userDTO.getEmail(), userDTO.getPassword());
     }
+
+    public List<User> getUserByUserName(String userName){
+        return userRepository.findByUserNameStartingWithOrderByUserName(userName);
+    }
 }

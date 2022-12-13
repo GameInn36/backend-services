@@ -27,9 +27,16 @@ public class UserController {
         this.validator = validator;
     }
     @GetMapping("/")
-    public List<User> getUsers()
+    public List<User> getUsers(@RequestParam(required = false) String username)
     {
-        return userRESTService.getAllUsers();
+        List<User> users;
+        if(username!=null){
+            users = userRESTService.getUserByUserName(username);
+        }
+        else{
+            users = userRESTService.getAllUsers();
+        }
+        return users;
     }
 
     @GetMapping("/{userId}")

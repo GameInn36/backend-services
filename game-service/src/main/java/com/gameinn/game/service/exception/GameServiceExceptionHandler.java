@@ -1,7 +1,6 @@
-package com.gameinn.game.service;
+package com.gameinn.game.service.exception;
 
 import com.gameinn.game.service.dto.ErrorResponseDTO;
-import com.gameinn.game.service.exception.GameNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,7 +14,7 @@ public class GameServiceExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponseDTO> handleException(GameNotFoundException e)
     {
-        return new ResponseEntity<ErrorResponseDTO>(new ErrorResponseDTO(new Date(), HttpStatus.NOT_FOUND.value(), "Not found", e.getMessage(), "sallama_path"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponseDTO(new Date(), e.getStatus(), e.getClass().getSimpleName(), e.getMessage()), HttpStatus.valueOf(e.getStatus()));
     }
 
 }

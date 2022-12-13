@@ -4,6 +4,7 @@ import com.gameinn.game.service.dto.GameDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.service.GameRESTService;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/game")
 public class GameRESTController {
@@ -39,9 +41,22 @@ public class GameRESTController {
     }
 
     @GetMapping("/")
-    public List<Game> getAllGames()
+    public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String studio, @RequestParam(required = false) String[] platforms)
     {
-        return gameRESTService.getAllGames();
+        List<Game> games;
+        if(name!= null){
+            games = gameRESTService.getGamesByName(name);
+        }
+        else if(studio != null){
+            games = gameRESTService.getGamesByStudio(studio);
+        }
+        else if(platforms != null){
+            games = gameRESTService.getGamesByPlatform(platforms);
+        }
+        else{
+            games = gameRESTService.getAllGames();
+        }
+        return games;
     }
 
     @GetMapping("/{game_id}")

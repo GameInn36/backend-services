@@ -4,7 +4,9 @@ import com.gameinn.game.service.dto.GameDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.repository.GameRepository;
+import com.gameinn.game.service.util.GameObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,23 +21,12 @@ public class GameRESTService {
 
     public void addGame(GameDTO gameDTO)
     {
-        Game game = new Game();
-        game.setName(gameDTO.getName());
-        game.setYear(gameDTO.getYear());
-        //TODO Convert string binary encoding to binary
-        game.setSummary(gameDTO.getSummary());
-        game.setCategories(gameDTO.getCategories());
-        game.setStudio(gameDTO.getStudio());
-        game.setPlatforms(gameDTO.getPlatforms());
-        game.setVote(0);
-        game.setVoteCount(0);
-        game.setReleaseDate(gameDTO.getReleaseDate());
-        gameRepository.insert(game);
+        gameRepository.insert(GameObjectMapper.toEntity(gameDTO));
     }
 
     public Game getGame(String gameId) throws GameNotFoundException
     {
-        return gameRepository.findById(gameId).orElseThrow(GameNotFoundException::new); //TODO change exception
+        return gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
     }
 
     public List<Game> getAllGames()
@@ -44,7 +35,7 @@ public class GameRESTService {
     }
 
     public Game deleteGame(String gameId) throws GameNotFoundException {
-        Game game = gameRepository.findById(gameId).orElseThrow(GameNotFoundException::new); //TODO change exception
+        Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
         gameRepository.delete(game);
         return game;
         //TODO reviews will be also deleted
@@ -63,6 +54,17 @@ public class GameRESTService {
         gameRepository.save(game);
     }
 
+    public List<Game> getGamesByStudio(String studio){
+        return gameRepository.findByStudioStartingWithIgnoreCase(studio);
+    }
+
+    public List<Game> getGamesByPlatform(String[] platforms){
+        return gameRepository.findByPlatformsContainingIgnoreCase(platforms);
+    }
+
+    public List<Game> getGamesByName(String name){
+        return gameRepository.findByNameStartingWithIgnoreCaseOrderByNameAsc(name);
+    }
 
     /*public ResponseTemplateVO GetGameById(String gameId){
         ResponseTemplateVO responseTemplateVO = new ResponseTemplateVO();
