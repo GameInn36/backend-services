@@ -17,7 +17,8 @@ public class UserDTO {
     private String userName;
     private String password;
     private String bio;
-    @Email
+    @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
     private String email;
     private List<String> toPlayList;
     private List<String> followedFriends;
