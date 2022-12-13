@@ -3,6 +3,7 @@ package com.gameinn.game.service.service;
 import com.gameinn.game.service.dto.GameDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
+import com.gameinn.game.service.feignClient.ReviewService;
 import com.gameinn.game.service.repository.GameRepository;
 import com.gameinn.game.service.util.GameObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,12 @@ import java.util.List;
 @Service
 public class GameRESTService {
     private final GameRepository gameRepository;
+
+    private final ReviewService reviewService;
     @Autowired
-    GameRESTService(GameRepository gameRepository){
+    GameRESTService(GameRepository gameRepository, ReviewService reviewService){
         this.gameRepository = gameRepository;
+        this.reviewService = reviewService;
     }
 
     public void addGame(GameDTO gameDTO)
