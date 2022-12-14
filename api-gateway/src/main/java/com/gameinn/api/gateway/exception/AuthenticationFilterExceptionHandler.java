@@ -20,7 +20,7 @@ public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHa
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
         ObjectMapper objectMapper = new ObjectMapper();
-        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),ex.getMessage(),exchange.getRequest().getPath().value());
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), HttpStatus.UNAUTHORIZED.value(),ex.getClass().getSimpleName(),ex.getMessage());
         byte[] bytes;
         try {
             bytes = objectMapper.writeValueAsBytes(error);
@@ -30,7 +30,6 @@ public class AuthenticationFilterExceptionHandler implements ErrorWebExceptionHa
         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bytes);
         exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        log.error("geldim");
         return exchange.getResponse().writeWith(Flux.just(buffer));
     }
 }
