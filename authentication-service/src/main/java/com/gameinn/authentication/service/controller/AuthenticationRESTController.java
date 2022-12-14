@@ -1,6 +1,6 @@
 package com.gameinn.authentication.service.controller;
 
-import com.gameinn.authentication.service.exception.InvalidUserNamePasswordException;
+import com.gameinn.authentication.service.exception.InvalidEmailPasswordException;
 import com.gameinn.authentication.service.feignClient.UserService;
 import com.gameinn.authentication.service.models.*;
 import com.gameinn.authentication.service.util.JwtTokenUtil;
@@ -37,7 +37,7 @@ public class AuthenticationRESTController {
 
         AuthenticationStatus status = authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         if(!status.getIsAuthenticated()){
-            throw new InvalidUserNamePasswordException(status.getMessage(),HttpStatus.UNAUTHORIZED.value());
+            throw new InvalidEmailPasswordException(status.getMessage(),HttpStatus.UNAUTHORIZED.value());
         }
         final String token = jwtTokenUtil.generateToken(authenticationRequest.getEmail());
         return ResponseEntity.ok(new JwtResponse(token));

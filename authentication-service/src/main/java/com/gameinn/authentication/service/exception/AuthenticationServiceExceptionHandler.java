@@ -19,7 +19,7 @@ public class AuthenticationServiceExceptionHandler {
     }
 
     @ExceptionHandler
-    ResponseEntity<?> handle(InvalidUserNamePasswordException exception){
+    ResponseEntity<?> handle(InvalidEmailPasswordException exception){
         ErrorResponseDTO error = new ErrorResponseDTO(new Date(), exception.getStatus(), exception.getClass().getSimpleName(), exception.getMessage());
         return new ResponseEntity<>(error, HttpStatus.valueOf(exception.getStatus()));
     }
