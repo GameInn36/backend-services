@@ -26,7 +26,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn clean install
+      run: mvn clean install -DskipTests=true
 
 #    - name: Creating staging Directory
 #      run: mkdir staging
