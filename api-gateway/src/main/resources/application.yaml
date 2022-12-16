@@ -37,3 +37,13 @@ spring:
 jwt:
   spring:
     web-application-type: reactive
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+  instance:
+    hostname: localhost

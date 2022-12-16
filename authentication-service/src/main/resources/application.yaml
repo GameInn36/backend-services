@@ -4,9 +4,12 @@ server:
 spring:
   application:
     name: AUTHENTICATION-SERVICE
-  zipkin:
-    base-url: http://localhost:9411/
 
-feign:
-  userService:
-    url: http://localhost:9001/user/
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+  instance:
+    hostname: localhost

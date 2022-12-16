@@ -4,8 +4,15 @@ server:
 spring:
   application:
     name: REVIEW-SERVICE
-  zipkin:
-    base-url: http://localhost:9411/
   data:
     mongodb:
       uri: mongodb+srv://faruk:faruk1234@gameinn.cjnkrd4.mongodb.net/REVIEWS?retryWrites=true&w=majority
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+  instance:
+    hostname: localhost
