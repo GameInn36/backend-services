@@ -11,6 +11,12 @@ name: CI/CD Workflow
 on:
   push:
     branches: [ "main" ]
+    
+env:
+  USER-SERVICE: http://localhost:9001
+  GAME-SERVICE: http://localhost:9002
+  REVIEW-SERVICE: http://localhost:9003
+  AUTHENTICATION-SERVICE: http://localhost:9090
 
 jobs:
   build:
