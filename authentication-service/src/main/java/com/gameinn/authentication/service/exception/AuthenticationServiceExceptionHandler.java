@@ -15,7 +15,7 @@ public class AuthenticationServiceExceptionHandler {
     @ExceptionHandler
     ResponseEntity<?> handle(FeignException exception){
         ErrorResponseDTO error = new ErrorResponseDTO(new Date(), exception.status(), exception.getClass().getSimpleName(), exception.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.valueOf(exception.status()));
+        return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler

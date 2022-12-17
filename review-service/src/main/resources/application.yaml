@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: REVIEW-SERVICE
+    name: review-service
   data:
     mongodb:
       uri: mongodb+srv://faruk:faruk1234@gameinn.cjnkrd4.mongodb.net/REVIEWS?retryWrites=true&w=majority
@@ -13,6 +13,6 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
   instance:
-    hostname: localhost
+    prefer-ip-address: true

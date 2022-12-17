@@ -2,7 +2,7 @@ package com.gameinn.game.service.feignClient;
 
 import org.springframework.cloud.openfeign.FeignClient;
 
-@FeignClient(value = "REVIEW-SERVICE",url = "${feign.reviewservice.url}")
+@FeignClient(name = "review-service")
 public interface ReviewService {
 
 }

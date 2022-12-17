@@ -1,0 +1,78 @@
+version: '3.7'
+
+services:
+  user-service:
+    image: frkork/user-service
+    mem_limit: 700m
+    ports:
+      - "9001:9001"
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    networks:
+      - gameinn-network
+
+  game-service:
+    image: frkork/game-service
+    mem_limit: 700m
+    ports:
+      - "9000:9002"
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    networks:
+      - gameinn-network
+
+  review-service:
+    image: frkork/review-service
+    mem_limit: 700m
+    ports:
+      - "9003:9003"
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    networks:
+      - gameinn-network
+
+  authentication-service:
+    image: frkork/authentication-service
+    mem_limit: 700m
+    ports:
+      - "9090:9090"
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    networks:
+      - gameinn-network
+
+  api-gateway:
+    image: frkork/api-gateway
+    mem_limit: 700m
+    ports:
+      - "9080:9080"
+    depends_on:
+      - service-registry
+      - authentication-service
+      - user-service
+      - game-service
+      - review-service
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
+    networks:
+      - gameinn-network
+
+  service-registry:
+    image: frkork/service-registry
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - gameinn-network
+
+
+networks:
+  gameinn-network:

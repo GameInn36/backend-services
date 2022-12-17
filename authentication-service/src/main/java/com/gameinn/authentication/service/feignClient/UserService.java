@@ -7,12 +7,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(value = "USER-SERVICE",url = "${feign.userservice.url}")
+@FeignClient(name = "user-service")
 public interface UserService {
 
-    @PostMapping("/validate")
+    @PostMapping("/user/validate")
     boolean validateUser(@RequestBody JwtRequest jwtRequest);
 
-    @PostMapping("/")
+    @PostMapping("/user/")
     RegisterResponse addUser(@RequestBody RegisterRequest registerRequest);
 }
