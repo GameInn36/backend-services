@@ -2,10 +2,11 @@ package com.gameinn.user.service.controller;
 
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
-import com.gameinn.user.service.exception.InvalidEmailException;
+import com.gameinn.user.service.exception.InvalidCredentialsException;
 import com.gameinn.user.service.service.UserRESTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,13 +53,17 @@ public class UserController {
     public ResponseEntity<?> addUser(@RequestBody UserCreateUpdateDTO newUser){
         Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(newUser);
         if(!violations.isEmpty()){
-            throw new InvalidEmailException(violations.stream().findFirst().get().getMessage());
+            throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
         return ResponseEntity.ok(userRESTService.addUser(newUser));
     }
 
     @PatchMapping("/{userId}")
     public UserReadDTO updateUserField(@PathVariable String userId, @RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
+        Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(userCreateUpdateDTO);
+        if(!violations.isEmpty()){
+            throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
+        }
         return userRESTService.updateUserField(userId, userCreateUpdateDTO);
     }
 }

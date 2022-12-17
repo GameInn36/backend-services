@@ -3,9 +3,11 @@ package com.gameinn.user.service.service;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.entity.User;
+import com.gameinn.user.service.exception.UserNotFoundException;
 import com.gameinn.user.service.repository.UserRepository;
 import com.gameinn.user.service.util.UserObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +36,11 @@ public class UserRESTService {
     }
 
     public UserReadDTO getUserByEmailAndPassword(UserCreateUpdateDTO userCreateUpdateDTO){
-        return UserObjectMapper.toReadDTO(userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword()));
+        User user = userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword());
+        if(user == null){
+            throw new UserNotFoundException("There is no user matches with given email-password", HttpStatus.NOT_FOUND.value());
+        }
+        return UserObjectMapper.toReadDTO(user);
     }
 
     public List<UserReadDTO> getUserByUsername(String userName){
@@ -43,6 +49,9 @@ public class UserRESTService {
 
     public UserReadDTO updateUserField(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
         User user = UserObjectMapper.mapUser(userCreateUpdateDTO,userRepository.findUserById(userId));
+        if(user == null){
+            throw new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value());
+        }
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 }
