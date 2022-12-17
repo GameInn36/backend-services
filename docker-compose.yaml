@@ -53,7 +53,7 @@ services:
     image: frkork/api-gateway
     mem_limit: 700m
     ports:
-      - "9080:9080"
+      - "9000:9000"
     depends_on:
       - service-registry
       - authentication-service

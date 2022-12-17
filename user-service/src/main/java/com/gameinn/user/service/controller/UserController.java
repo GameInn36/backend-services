@@ -1,7 +1,7 @@
 package com.gameinn.user.service.controller;
 
-import com.gameinn.user.service.dto.UserDTO;
-import com.gameinn.user.service.entity.User;
+import com.gameinn.user.service.dto.UserCreateUpdateDTO;
+import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidEmailException;
 import com.gameinn.user.service.service.UserRESTService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,34 +27,38 @@ public class UserController {
         this.validator = validator;
     }
     @GetMapping("/")
-    public List<User> getUsers(@RequestParam(required = false) String username)
+    public List<UserReadDTO> getUsers(@RequestParam(required = false) String username)
     {
-        List<User> users;
+        List<UserReadDTO> users;
         if(username!=null){
-            users = userRESTService.getUserByUserName(username);
+            users = userRESTService.getUserByUsername(username);
         }
         else{
             users = userRESTService.getAllUsers();
         }
         return users;
     }
-
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable String userId){
+    public UserReadDTO getUserById(@PathVariable String userId){
         return userRESTService.getUserById(userId);
     }
 
     @PostMapping("/validate")
-    public boolean validateUser(@RequestBody UserDTO userDTO){
-        return userRESTService.getUserByEmailAndPassword(userDTO) != null;
+    public UserReadDTO validateUser(@RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
+        return userRESTService.getUserByEmailAndPassword(userCreateUpdateDTO);
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addUser(@RequestBody UserDTO newUser){
-        Set<ConstraintViolation<UserDTO>> violations = validator.validate(newUser);
+    public ResponseEntity<?> addUser(@RequestBody UserCreateUpdateDTO newUser){
+        Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(newUser);
         if(!violations.isEmpty()){
             throw new InvalidEmailException(violations.stream().findFirst().get().getMessage());
         }
         return ResponseEntity.ok(userRESTService.addUser(newUser));
+    }
+
+    @PatchMapping("/{userId}")
+    public UserReadDTO updateUserField(@PathVariable String userId, @RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
+        return userRESTService.updateUserField(userId, userCreateUpdateDTO);
     }
 }

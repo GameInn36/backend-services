@@ -40,19 +40,18 @@ public class AuthenticationRESTController {
             throw new InvalidEmailPasswordException(status.getMessage(),HttpStatus.UNAUTHORIZED.value());
         }
         final String token = jwtTokenUtil.generateToken(authenticationRequest.getEmail());
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(status.getUser(),token));
     }
 
     private AuthenticationStatus authenticate(String email, String password){
         AuthenticationStatus status;
         boolean isAdmin = email.equals("admin@gameinn.com") && password.equals("admin");
-        boolean isValid = userService.validateUser(new JwtRequest(email,password));
-        log.debug(String.valueOf(isValid));
-        if(isAdmin || isValid){
-            status = new AuthenticationStatus(true,"Authentication Successful.");
+        User user = userService.validateUser(new JwtRequest(email,password));
+        if(isAdmin || user != null){
+            status = new AuthenticationStatus(true, user,"Authentication Successful.");
         }
         else{
-            status = new AuthenticationStatus(false,"Invalid Username/Password");
+            status = new AuthenticationStatus(false, null,"Invalid Username/Password");
         }
         return status;
     }

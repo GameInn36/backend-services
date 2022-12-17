@@ -1,6 +1,7 @@
 package com.gameinn.user.service.service;
 
-import com.gameinn.user.service.dto.UserDTO;
+import com.gameinn.user.service.dto.UserCreateUpdateDTO;
+import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.entity.User;
 import com.gameinn.user.service.repository.UserRepository;
 import com.gameinn.user.service.util.UserObjectMapper;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserRESTService {
@@ -19,23 +21,28 @@ public class UserRESTService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public List<UserReadDTO> getAllUsers(){
+        return userRepository.findAll().stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
-    public User addUser(UserDTO newUser){
-        return userRepository.insert(UserObjectMapper.toEntity(newUser));
+    public UserReadDTO addUser(UserCreateUpdateDTO newUser){
+        return UserObjectMapper.toReadDTO(userRepository.insert(UserObjectMapper.toEntity(newUser)));
     }
 
-    public User getUserById(String Id){
-        return userRepository.findUserById(Id);
+    public UserReadDTO getUserById(String Id){
+        return UserObjectMapper.toReadDTO(userRepository.findUserById(Id));
     }
 
-    public User getUserByEmailAndPassword(UserDTO userDTO){
-        return userRepository.findUserByEmailAndPassword(userDTO.getEmail(), userDTO.getPassword());
+    public UserReadDTO getUserByEmailAndPassword(UserCreateUpdateDTO userCreateUpdateDTO){
+        return UserObjectMapper.toReadDTO(userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword()));
     }
 
-    public List<User> getUserByUserName(String userName){
-        return userRepository.findByUserNameStartingWithOrderByUserName(userName);
+    public List<UserReadDTO> getUserByUsername(String userName){
+        return userRepository.findByUsernameStartingWithOrderByUsername(userName).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+    }
+
+    public UserReadDTO updateUserField(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
+        User user = UserObjectMapper.mapUser(userCreateUpdateDTO,userRepository.findUserById(userId));
+        return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 }

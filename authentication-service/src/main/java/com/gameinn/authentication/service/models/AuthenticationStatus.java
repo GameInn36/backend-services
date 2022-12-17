@@ -7,5 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class AuthenticationStatus {
     private Boolean isAuthenticated;
+    private User user;
     private String message;
 }

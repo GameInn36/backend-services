@@ -17,8 +17,8 @@ public class JwtTokenUtil {
         this.jwtConfig = jwtConfig;
     }
 
-    public String generateToken(String id){
-        Claims claims = Jwts.claims().setSubject(id);
+    public String generateToken(String email){
+        Claims claims = Jwts.claims().setSubject(email);
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + jwtConfig.getValidity() * 1000 * 60;
         Date exp = new Date(expMillis);

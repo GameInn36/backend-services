@@ -10,5 +10,5 @@ import java.util.List;
 public interface UserRepository extends MongoRepository<User,String> {
     User findUserByEmailAndPassword(String email, String password);
     User findUserById(String id);
-    List<User> findByUserNameStartingWithOrderByUserName(String userName);
+    List<User> findByUsernameStartingWithOrderByUsername(String userName);
 }

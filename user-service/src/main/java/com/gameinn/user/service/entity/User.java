@@ -4,7 +4,6 @@ import com.gameinn.user.service.dataTypes.GameLog;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +17,7 @@ public class User {
 
     @Id
     private String id;
-    private String userName;
+    private String username;
     private String password;
     private String bio;
     @Indexed(unique = true)
@@ -27,11 +26,11 @@ public class User {
     private List<String> followedFriends;
     private List<String> favoriteGames;
     private List<GameLog> logs;
-    private Binary profileImage;
+    private String profileImage;
 
     private User(UserBuilder userBuilder){
         this.id = userBuilder.id;
-        this.userName = userBuilder.userName;
+        this.username = userBuilder.username;
         this.password = userBuilder.password;
         this.bio = userBuilder.bio;
         this.email = userBuilder.email;
@@ -44,7 +43,7 @@ public class User {
 
     public static class UserBuilder{
         private String id;
-        private final String userName;
+        private final String username;
         private final String password;
         private String bio;
         private final String email;
@@ -52,10 +51,10 @@ public class User {
         private List<String> followedFriends;
         private List<String> favoriteGames;
         private List<GameLog> logs;
-        private Binary profileImage;
+        private String profileImage;
 
-        public UserBuilder(String userName, String password, String email){
-            this.userName = userName;
+        public UserBuilder(String username, String password, String email){
+            this.username = username;
             this.password = password;
             this.email = email;
         }
@@ -84,7 +83,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder setProfileImage(Binary profileImage) {
+        public UserBuilder setProfileImage(String profileImage) {
             this.profileImage = profileImage;
             return this;
         }

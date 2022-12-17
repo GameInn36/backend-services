@@ -3,7 +3,6 @@ package com.gameinn.game.service.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,7 +16,7 @@ public class Game {
     private String id;
     private String name;
     private int year;
-    private Binary cover;
+    private String cover;
     private String summary;
     private String[] categories;
     private String studio;
@@ -44,7 +43,7 @@ public class Game {
         private String id;
         private String name;
         private int year;
-        private Binary cover;
+        private String cover;
         private String summary;
         private String[] categories;
         private String studio;
@@ -71,7 +70,7 @@ public class Game {
             return this;
         }
 
-        public GameBuilder setCover(Binary cover) {
+        public GameBuilder setCover(String cover) {
             this.cover = cover;
             return this;
         }
