@@ -17,7 +17,7 @@ services:
     image: frkork/game-service
     mem_limit: 700m
     ports:
-      - "9000:9002"
+      - "9002:9002"
     depends_on:
       - service-registry
     environment:
@@ -56,10 +56,6 @@ services:
       - "9000:9000"
     depends_on:
       - service-registry
-      - authentication-service
-      - user-service
-      - game-service
-      - review-service
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://service-registry:8761/eureka
     networks:
