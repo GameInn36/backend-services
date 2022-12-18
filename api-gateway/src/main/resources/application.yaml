@@ -10,40 +10,30 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: lb://user-service
+          uri: ${USER_SERVICE:http://localhost:9001}
           predicates:
             - Path=/user/**
           filters:
             - AuthenticationFilter
         - id: game-service
-          uri: lb://game-service
+          uri: ${GAME_SERVICE:http://localhost:9002}
           predicates:
             - Path=/game/**
           filters:
             - AuthenticationFilter
         - id: review-service
-          uri: lb://review-service
+          uri: ${REVIEW_SERVICE:http://localhost:9003}
           predicates:
             - Path=/review/**
           filters:
             - AuthenticationFilter
         - id: authentication-service
-          uri: lb://authentication-service
+          uri: ${AUTHENTICATION_SERVICE:http://localhost:9090}
           predicates:
             - Path=/auth/**
           filters:
             - AuthenticationFilter
-
 jwt:
   spring:
     web-application-type: reactive
 
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true

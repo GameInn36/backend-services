@@ -8,11 +8,12 @@ spring:
     mongodb:
       uri: mongodb+srv://faruk:faruk1234@gameinn.cjnkrd4.mongodb.net/REVIEWS?retryWrites=true&w=majority
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+
+
+feign:
+  gameservice:
+    url: ${GAME_SERVICE:http://localhost:9002}
+  userservice:
+    url: ${USER_SERVICE:http://localhost:9001}
+
+
