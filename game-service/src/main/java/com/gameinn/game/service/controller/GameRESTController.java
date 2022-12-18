@@ -41,14 +41,14 @@ public class GameRESTController {
     }
 
     @GetMapping("/")
-    public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String studio, @RequestParam(required = false) String[] platforms)
+    public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String publisher, @RequestParam(required = false) String[] platforms)
     {
         List<Game> games;
         if(name!= null){
             games = gameRESTService.getGamesByName(name);
         }
-        else if(studio != null){
-            games = gameRESTService.getGamesByStudio(studio);
+        else if(publisher != null){
+            games = gameRESTService.getGamesByPublisher(publisher);
         }
         else if(platforms != null){
             games = gameRESTService.getGamesByPlatform(platforms);

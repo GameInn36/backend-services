@@ -6,13 +6,13 @@ import com.gameinn.game.service.entity.Game;
 public class GameObjectMapper {
     public static Game toEntity(GameDTO gameDTO){
         return new Game.GameBuilder(gameDTO.getName())
-                .setCategories(gameDTO.getCategories())
+                .setGenres(gameDTO.getGenres())
                 .setPlatforms(gameDTO.getPlatforms())
-                .setYear(gameDTO.getYear())
-                .setReleaseDate(gameDTO.getReleaseDate())
-                .setStudio(gameDTO.getStudio())
+                .setFirst_release_date(gameDTO.getFirst_release_date())
                 .setPlatforms(gameDTO.getPlatforms())
                 .setCover(gameDTO.getCover())
+                .setPublisher(gameDTO.getPublisher())
+                .setSummary(gameDTO.getSummary())
                 .build();
     }
 }

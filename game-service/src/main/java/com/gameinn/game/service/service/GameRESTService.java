@@ -58,8 +58,8 @@ public class GameRESTService {
         gameRepository.save(game);
     }
 
-    public List<Game> getGamesByStudio(String studio){
-        return gameRepository.findByStudioStartingWithIgnoreCase(studio);
+    public List<Game> getGamesByPublisher(String publisher){
+        return gameRepository.findByPublisherStartingWithIgnoreCaseOrderByNameAsc(publisher);
     }
 
     public List<Game> getGamesByPlatform(String[] platforms){

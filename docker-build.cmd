@@ -1,5 +1,5 @@
 @ECHO OFF
-cd C:\Users\90539\IdeaProjects\backend-services
+cd C:\Users\90539\IdeaProjects\backend-service-release
 
 ECHO ==== DOCKERIZE API-GATEWAY ====
 

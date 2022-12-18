@@ -20,7 +20,7 @@ public class JwtTokenUtil {
     public String generateToken(String email){
         Claims claims = Jwts.claims().setSubject(email);
         long nowMillis = System.currentTimeMillis();
-        long expMillis = nowMillis + jwtConfig.getValidity() * 1000 * 60;
+        long expMillis = nowMillis + jwtConfig.getValidity();
         Date exp = new Date(expMillis);
         return Jwts.builder().setClaims(claims).setIssuedAt(new Date(nowMillis)).setExpiration(exp)
                 .signWith(SignatureAlgorithm.HS256,jwtConfig.getSecret()).compact();

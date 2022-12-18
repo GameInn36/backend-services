@@ -6,5 +6,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JwtConfig {
     private final String secret = "mySecret";
-    private final long validity = 20;
+    private final long validity = 86400000L;
 }
