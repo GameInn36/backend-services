@@ -1,6 +1,7 @@
 package com.gameinn.game.service.controller;
 
 import com.gameinn.game.service.dto.GameDTO;
+import com.gameinn.game.service.dto.GamePageDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.service.GameRESTService;
@@ -28,12 +29,6 @@ public class GameRESTController {
         return"Hello from GameService!";
     }
 
-    /*@GetMapping("/{gameId}")
-    public ResponseTemplateVO getGameById(@PathVariable String gameId){
-        System.out.println("Controller: " + gameId);
-        return gameRESTService.GetGameById(gameId);
-    }*/
-
     @PostMapping("/")
     public void addGame(@RequestBody GameDTO gameDTO)
     {
@@ -60,9 +55,13 @@ public class GameRESTController {
     }
 
     @GetMapping("/{game_id}")
-    public Game getGame(@PathVariable("game_id") String gameId) throws GameNotFoundException
-    {
+    public Game getGame(@PathVariable("game_id") String gameId) throws GameNotFoundException {
         return gameRESTService.getGame(gameId);
+    }
+
+    @GetMapping("/{game_id}/page")
+    public GamePageDTO getGamePage(@PathVariable("game_id") String gameId) throws GameNotFoundException {
+        return gameRESTService.getGamePage(gameId);
     }
 
     @DeleteMapping("/{game_id}")
@@ -71,8 +70,7 @@ public class GameRESTController {
     }
 
     @PutMapping("/{game_id}")
-    public void updateGameVote(@PathVariable("game_id") String gameId, @RequestBody @Range(min = 0, max = 5) int vote)
-    {
+    public void updateGameVote(@PathVariable("game_id") String gameId, @RequestBody @Range(min = 0, max = 5) int vote) throws GameNotFoundException {
         gameRESTService.addVote(gameId, vote);
     }
 }

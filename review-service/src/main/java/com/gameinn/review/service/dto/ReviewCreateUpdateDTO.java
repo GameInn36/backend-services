@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewDTO {
+public class ReviewCreateUpdateDTO {
     @NotNull
     private String userId;
     @NotNull

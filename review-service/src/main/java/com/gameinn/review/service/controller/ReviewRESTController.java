@@ -1,5 +1,5 @@
 package com.gameinn.review.service.controller;
-import com.gameinn.review.service.dto.ReviewDTO;
+import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.entity.Review;
 import com.gameinn.review.service.service.ReviewRESTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +22,28 @@ public class ReviewRESTController {
     }
 
     @GetMapping("/")
-    public List<Review> getAllReviews(){
+    public List<Review> getAllReviews(@RequestParam(required = false) String userId, @RequestParam(required = false) String gameId){
+        if(gameId != null && userId != null){
+            return this.reviewRESTService.getReviewsByUserIdAndGameId(userId,gameId);
+        }
+        else if(userId != null){
+            return this.reviewRESTService.getReviewsByUserId(userId);
+        }
+        else if(gameId != null){
+            return this.reviewRESTService.getReviewsByGameId(gameId);
+        }
         return this.reviewRESTService.getAllReviews();
     }
     @PostMapping("/")
-    public Review addReview(@RequestBody @Valid ReviewDTO reviewDTO){
+    public Review addReview(@RequestBody @Valid ReviewCreateUpdateDTO reviewCreateUpdateDTO){
         /*Set<ConstraintViolation<ReviewDTO>> violations = validator.validate(reviewDTO);
         for (ConstraintViolation<ReviewDTO> violation : violations) {
             System.out.println(violation.getMessage());
         }*/
 
-        return this.reviewRESTService.addReview(reviewDTO);
+        return this.reviewRESTService.addReview(reviewCreateUpdateDTO);
     }
+
 
     @GetMapping("/deneme")
     public String deneme(){

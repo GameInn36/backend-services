@@ -1,6 +1,6 @@
 package com.gameinn.review.service.service;
 
-import com.gameinn.review.service.dto.ReviewDTO;
+import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.entity.Review;
 import com.gameinn.review.service.feignClient.GameService;
 import com.gameinn.review.service.repository.ReviewRepository;
@@ -20,15 +20,25 @@ public class ReviewRESTService {
         this.reviewRepository = reviewRepository;
     }
 
-    public Review addReview(ReviewDTO reviewDTO){
-        Review newReview = ReviewObjectMapper.toEntity(reviewDTO);
+    public Review addReview(ReviewCreateUpdateDTO reviewCreateUpdateDTO){
+        Review newReview = ReviewObjectMapper.toEntity(reviewCreateUpdateDTO);
         return reviewRepository.insert(newReview);
     }
 
     public List<Review> getAllReviews(){
         return reviewRepository.findAll();
     }
+    public List<Review> getReviewsByGameId(String gameId){
+        return reviewRepository.getReviewsByGameIdOrderByLikeCountDesc(gameId);
+    }
 
+    public List<Review> getReviewsByUserId(String userId){
+        return reviewRepository.getReviewsByUserIdOrderByLikeCountDesc(userId);
+    }
+
+    public List<Review> getReviewsByUserIdAndGameId(String userId, String gameId){
+        return reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
+    }
     public String deneme(){
         return gameService.hello();
     }

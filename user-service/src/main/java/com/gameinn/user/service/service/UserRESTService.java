@@ -32,14 +32,14 @@ public class UserRESTService {
     }
 
     public UserReadDTO getUserById(String Id){
-        return UserObjectMapper.toReadDTO(userRepository.findUserById(Id));
+        return UserObjectMapper.toReadDTO(
+                userRepository.findUserById(Id)
+                        .orElseThrow(() -> new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value())));
     }
 
     public UserReadDTO getUserByEmailAndPassword(UserCreateUpdateDTO userCreateUpdateDTO){
-        User user = userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword());
-        if(user == null){
-            throw new UserNotFoundException("There is no user matches with given email-password", HttpStatus.NOT_FOUND.value());
-        }
+        User user = userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword())
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given email-password", HttpStatus.NOT_FOUND.value()));
         return UserObjectMapper.toReadDTO(user);
     }
 
@@ -48,10 +48,8 @@ public class UserRESTService {
     }
 
     public UserReadDTO updateUserField(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
-        User user = UserObjectMapper.mapUser(userCreateUpdateDTO,userRepository.findUserById(userId));
-        if(user == null){
-            throw new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value());
-        }
+        User user = UserObjectMapper.mapUser(userCreateUpdateDTO, userRepository
+                .findUserById(userId).orElseThrow(() ->new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value())));
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 }

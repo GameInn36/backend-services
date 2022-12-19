@@ -1,4 +1,4 @@
-package com.gameinn.game.service.VO;
+package com.gameinn.game.service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Review {
     private String id;
-    private String gameId;
     private String userId;
     private String context;
-    /*private int vote;
+    private int vote;
     private boolean voted;
     private int likeCount;
-    private long unixDate;*/
+    private long createdAt;
+    private long updatedAt;
 }
