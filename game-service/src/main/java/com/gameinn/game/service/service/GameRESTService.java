@@ -88,7 +88,7 @@ public class GameRESTService {
                     .build();
             gamePage.getReviews().add(gamePageReview);
         }
-        List<String> friends = userService.getUserById(userId).getFollowedFriends();
+        List<String> friends = userService.getUserById(userId).getFollowing();
         if(friends != null){
             List<GamePageReview> followedFriendsReviews = gamePage.getReviews().stream().filter((review -> friends.contains(review.getUser().getId())))
                     .collect(Collectors.toList());

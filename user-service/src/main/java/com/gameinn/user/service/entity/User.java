@@ -23,7 +23,8 @@ public class User {
     @Indexed(unique = true)
     private String email;
     private List<String> toPlayList;
-    private List<String> followedFriends;
+    private List<String> following;
+    private List<String> followers;
     private List<String> favoriteGames;
     private List<GameLog> logs;
     private String profileImage;
@@ -35,7 +36,8 @@ public class User {
         this.bio = userBuilder.bio;
         this.email = userBuilder.email;
         this.toPlayList = userBuilder.toPlayList;
-        this.followedFriends = userBuilder.followedFriends;
+        this.following = userBuilder.following;
+        this.followers = userBuilder.followers;
         this.favoriteGames = userBuilder.favoriteGames;
         this.logs = userBuilder.logs;
         this.profileImage = userBuilder.profileImage;
@@ -48,7 +50,8 @@ public class User {
         private String bio;
         private final String email;
         private List<String> toPlayList;
-        private List<String> followedFriends;
+        private List<String> following;
+        private  List<String> followers;
         private List<String> favoriteGames;
         private List<GameLog> logs;
         private String profileImage;
@@ -73,8 +76,15 @@ public class User {
             return this;
         }
 
-        public UserBuilder setFollowedFriends(List<String> followedFriends) {
-            this.followedFriends = followedFriends;
+
+        public UserBuilder setFollowing(List<String> following)
+        {
+            this.following = following;
+            return this;
+        }
+
+        public UserBuilder setFollowers(List<String> followers) {
+            this.followers = followers;
             return this;
         }
 

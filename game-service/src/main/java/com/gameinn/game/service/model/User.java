@@ -13,5 +13,5 @@ public class User {
     private String id;
     private String username;
     private String profileImage;
-    private List<String> followedFriends;
+    private List<String> following;
 }
