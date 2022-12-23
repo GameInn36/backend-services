@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,6 +87,26 @@ public class UserRESTService {
 
         sourceUser.getFollowing().add(destId);
         destUser.getFollowers().add(sourceId);
+
+        userRepository.save(sourceUser);
+        userRepository.save(destUser);
+
+        return UserObjectMapper.toReadDTO(sourceUser);
+    }
+
+    public UserReadDTO unfollowUser(String sourceId, String destId)
+    {
+        User sourceUser = userRepository.findUserById(sourceId)
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + sourceId, HttpStatus.NOT_FOUND.value()));
+        User destUser = userRepository.findUserById(destId)
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id:" + destId, HttpStatus.NOT_FOUND.value()));
+
+
+        Predicate<String> destIdFilter = a->(a.equals(destId));
+        Predicate<String> sourceIdFilter = a->(a.equals(sourceId));
+
+        sourceUser.getFollowing().removeIf(destIdFilter);
+        destUser.getFollowers().removeIf(sourceIdFilter);
 
         userRepository.save(sourceUser);
         userRepository.save(destUser);

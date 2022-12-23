@@ -81,4 +81,11 @@ public class UserController {
         String requestOwnerId = JwtUtil.getSubject(JwtUtil.getToken(request));
         return userRESTService.followUser(requestOwnerId, userId);
     }
+
+    @PutMapping("/unfollow/{userId}")
+    public UserReadDTO unfollowUser(HttpServletRequest request, @PathVariable String userId)
+    {
+        String requestOwnerId = JwtUtil.getSubject(JwtUtil.getToken(request));
+        return userRESTService.unfollowUser(requestOwnerId, userId);
+    }
 }
