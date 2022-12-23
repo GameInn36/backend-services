@@ -89,4 +89,32 @@ public class GameRESTService {
         }
         return gamePage;
     }
+
+    public Game updateVote(String gameId, float vote) throws GameNotFoundException
+    {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
+
+        int addedVoteCount = vote >= 0 ? 1 : -1;
+
+        int gameVoteCount = game.getVoteCount();
+        float gameVote = game.getVote();
+
+        int newGameVoteCount = gameVoteCount + addedVoteCount;
+        float newVote;
+
+        if(newGameVoteCount == 0)
+        {
+            newVote = 0;
+        }
+        else
+        {
+            newVote = ((gameVote * gameVoteCount) + vote) / newGameVoteCount;
+        }
+
+        game.setVote(newVote);
+        game.setVoteCount(newGameVoteCount);
+
+        return gameRepository.save(game);
+    }
 }

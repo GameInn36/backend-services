@@ -1,6 +1,7 @@
 package com.gameinn.review.service.controller;
 import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.entity.Review;
+import com.gameinn.review.service.exception.ReviewNotFoundException;
 import com.gameinn.review.service.service.ReviewRESTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,5 +49,10 @@ public class ReviewRESTController {
     @GetMapping("/deneme")
     public String deneme(){
         return reviewRESTService.deneme();
+    }
+
+    @DeleteMapping("/{review_id}")
+    public Review deleteReview(@PathVariable("review_id") String reviewId) throws ReviewNotFoundException {
+        return reviewRESTService.deleteReview(reviewId);
     }
 }

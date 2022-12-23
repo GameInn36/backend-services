@@ -23,11 +23,6 @@ public class GameRESTController {
         this.gameRESTService = gameRESTService;
     }
 
-    @PostMapping("/")
-    public void addGame(@RequestBody GameDTO gameDTO)
-    {
-        gameRESTService.addGame(gameDTO);
-    }
 
     @GetMapping("/")
     public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String publisher, @RequestParam(required = false) String[] platforms)
@@ -58,13 +53,27 @@ public class GameRESTController {
         return gameRESTService.getGamePage(gameId);
     }
 
+    @PostMapping("/")
+    public void addGame(@RequestBody GameDTO gameDTO)
+    {
+        gameRESTService.addGame(gameDTO);
+    }
+
+    @PostMapping("/{gameId}/vote")
+    public Game updateVote(@PathVariable String gameId, @RequestBody Game game) throws GameNotFoundException
+    {
+        return gameRESTService.updateVote(gameId, game.getVote());
+    }
+
     @DeleteMapping("/{game_id}")
     public Game deleteGame(@PathVariable("game_id") String gameId) throws GameNotFoundException {
         return gameRESTService.deleteGame(gameId);
     }
 
     @PutMapping("/{game_id}")
-    public Game updateGameVote(@PathVariable("game_id") String gameId, @RequestBody GameDTO gameDTO) throws GameNotFoundException {
+    public Game updateGame(@PathVariable("game_id") String gameId, @RequestBody GameDTO gameDTO) throws GameNotFoundException {
         return gameRESTService.updateGame(gameId, gameDTO);
     }
+
+
 }
