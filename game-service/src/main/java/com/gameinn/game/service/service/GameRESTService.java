@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GameRESTService {
@@ -69,7 +70,7 @@ public class GameRESTService {
         return gameRepository.findByNameStartingWithIgnoreCaseOrderByNameAsc(name);
     }
 
-    public GamePageDTO getGamePage(String gameId) throws GameNotFoundException {
+    public GamePageDTO getGamePage(String gameId, String userId) throws GameNotFoundException {
         GamePageDTO gamePage = new GamePageDTO();
         gamePage.setGame(getGame(gameId));
         gamePage.setReviews(new ArrayList<>());
@@ -86,6 +87,15 @@ public class GameRESTService {
                     .setLikeCount(review.getLikeCount())
                     .build();
             gamePage.getReviews().add(gamePageReview);
+        }
+        List<String> friends = userService.getUserById(userId).getFollowedFriends();
+        if(friends != null){
+            List<GamePageReview> followedFriendsReviews = gamePage.getReviews().stream().filter((review -> friends.contains(review.getUser().getId())))
+                    .collect(Collectors.toList());
+            gamePage.setFollowedFriendsReviews(followedFriendsReviews);
+        }
+        else{
+            gamePage.setFollowedFriendsReviews(new ArrayList<>());
         }
         return gamePage;
     }

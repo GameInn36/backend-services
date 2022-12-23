@@ -14,4 +14,5 @@ import java.util.List;
 public class GamePageDTO {
     private Game game;
     private List<GamePageReview> reviews;
+    private List<GamePageReview> followedFriendsReviews;
 }

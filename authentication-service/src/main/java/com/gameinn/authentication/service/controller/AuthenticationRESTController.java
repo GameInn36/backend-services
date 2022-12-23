@@ -39,7 +39,7 @@ public class AuthenticationRESTController {
         if(!status.getIsAuthenticated()){
             throw new InvalidEmailPasswordException(status.getMessage(),HttpStatus.UNAUTHORIZED.value());
         }
-        final String token = jwtTokenUtil.generateToken(authenticationRequest.getEmail());
+        final String token = jwtTokenUtil.generateToken(status.getUser().getId());
         return ResponseEntity.ok(new JwtResponse(status.getUser(),token));
     }
 

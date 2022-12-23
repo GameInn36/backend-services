@@ -5,11 +5,14 @@ import com.gameinn.game.service.dto.GamePageDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.service.GameRESTService;
+import com.gameinn.game.service.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 
 
 @Slf4j
@@ -49,8 +52,9 @@ public class GameRESTController {
     }
 
     @GetMapping("/{game_id}/page")
-    public GamePageDTO getGamePage(@PathVariable("game_id") String gameId) throws GameNotFoundException {
-        return gameRESTService.getGamePage(gameId);
+    public GamePageDTO getGamePage(HttpServletRequest request, @PathVariable("game_id") String gameId) throws GameNotFoundException {
+        String userId = JwtUtil.getSubject(JwtUtil.getToken(request));
+        return gameRESTService.getGamePage(gameId,userId);
     }
 
     @PostMapping("/")
