@@ -1,11 +1,14 @@
 package com.gameinn.review.service.controller;
 import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
+import com.gameinn.review.service.dto.ReviewPageDTO;
 import com.gameinn.review.service.entity.Review;
 import com.gameinn.review.service.exception.ReviewNotFoundException;
 import com.gameinn.review.service.service.ReviewRESTService;
+import com.gameinn.review.service.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
 import java.util.List;
 
@@ -34,6 +37,12 @@ public class ReviewRESTController {
             return this.reviewRESTService.getReviewsByGameId(gameId);
         }
         return this.reviewRESTService.getAllReviews();
+    }
+
+    @GetMapping("/reviewPage")
+    public ReviewPageDTO getReviewPage(HttpServletRequest request){
+        String userId = JwtUtil.getSubject(JwtUtil.getToken(request));
+        return reviewRESTService.getReviewPage(userId);
     }
     @PostMapping("/")
     public Review addReview(@RequestBody @Valid ReviewCreateUpdateDTO reviewCreateUpdateDTO){
