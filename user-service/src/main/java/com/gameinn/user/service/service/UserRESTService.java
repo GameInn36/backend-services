@@ -66,4 +66,30 @@ public class UserRESTService {
         List<Game> allGames = gameService.getAllGames();
         return allGames.stream().filter((game -> gameIds.contains(game.getId()))).collect(Collectors.toList());
     }
+
+    public UserReadDTO followUser(String sourceId, String destId)
+    {
+        User sourceUser = userRepository.findUserById(sourceId)
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + sourceId, HttpStatus.NOT_FOUND.value()));
+        User destUser = userRepository.findUserById(destId)
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id:" + destId, HttpStatus.NOT_FOUND.value()));
+
+        if(sourceUser.getFollowing() == null)
+        {
+            sourceUser.setFollowing(new ArrayList<>());
+        }
+
+        if(destUser.getFollowing() == null)
+        {
+            destUser.setFollowers(new ArrayList<>());
+        }
+
+        sourceUser.getFollowing().add(destId);
+        destUser.getFollowers().add(sourceId);
+
+        userRepository.save(sourceUser);
+        userRepository.save(destUser);
+
+        return UserObjectMapper.toReadDTO(sourceUser);
+    }
 }

@@ -5,12 +5,14 @@ import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
 import com.gameinn.user.service.model.Game;
 import com.gameinn.user.service.service.UserRESTService;
+import com.gameinn.user.service.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.List;
@@ -71,5 +73,12 @@ public class UserController {
             throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
         return userRESTService.updateUser(userId, userCreateUpdateDTO);
+    }
+
+    @PutMapping("/follow/{userId}")
+    public UserReadDTO followUser(HttpServletRequest request, @PathVariable String userId)
+    {
+        String requestOwnerId = JwtUtil.getSubject(JwtUtil.getToken(request));
+        return userRESTService.followUser(requestOwnerId, userId);
     }
 }
