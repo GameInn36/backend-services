@@ -15,4 +15,15 @@ public class GameObjectMapper {
                 .setSummary(gameDTO.getSummary())
                 .build();
     }
+
+    public static Game mapGame(GameDTO src, Game dest){
+        dest.setName(src.getName());
+        dest.setCover(src.getCover());
+        dest.setSummary(src.getSummary());
+        dest.setGenres(src.getGenres());
+        dest.setPublisher(src.getPublisher());
+        dest.setPlatforms(src.getPlatforms());
+        dest.setFirst_release_date(src.getFirst_release_date());
+        return dest;
+    }
 }

@@ -13,21 +13,12 @@ public class UserObjectMapper {
     }
 
     public static User mapUser(UserCreateUpdateDTO src, User dest){
-        if(src.getEmail() != null){
-            dest.setEmail(src.getEmail());
-        }
-        if(src.getPassword() != null){
-            dest.setPassword(src.getPassword());
-        }
-        if(src.getUsername() != null){
-            dest.setUsername(src.getUsername());
-        }
-        if(src.getBio() != null){
-            dest.setBio(src.getBio());
-        }
-        if(src.getProfileImage() != null){
-            dest.setProfileImage(src.getProfileImage());
-        }
+        dest.setEmail(src.getEmail());
+        dest.setPassword(src.getPassword());
+        dest.setUsername(src.getUsername());
+        dest.setBio(src.getBio());
+        dest.setProfileImage(src.getProfileImage());
+        dest.setFavoriteGames(src.getFavoriteGames());
         return dest;
     }
     public static UserReadDTO toReadDTO(User user){

@@ -44,6 +44,12 @@ public class UserController {
         return userRESTService.getUserById(userId);
     }
 
+    @GetMapping("/{userId}/toPlayList")
+    public ResponseEntity<?> getToPlayList(@PathVariable String userId){
+        return null;
+    }
+
+
     @PostMapping("/validate")
     public UserReadDTO validateUser(@RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
         return userRESTService.getUserByEmailAndPassword(userCreateUpdateDTO);
@@ -58,12 +64,12 @@ public class UserController {
         return ResponseEntity.ok(userRESTService.addUser(newUser));
     }
 
-    @PatchMapping("/{userId}")
-    public UserReadDTO updateUserField(@PathVariable String userId, @RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
+    @PutMapping("/{userId}")
+    public UserReadDTO updateUser(@PathVariable String userId, @RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
         Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(userCreateUpdateDTO);
         if(!violations.isEmpty()){
             throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
-        return userRESTService.updateUserField(userId, userCreateUpdateDTO);
+        return userRESTService.updateUser(userId, userCreateUpdateDTO);
     }
 }

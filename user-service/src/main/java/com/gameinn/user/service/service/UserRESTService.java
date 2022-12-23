@@ -47,7 +47,7 @@ public class UserRESTService {
         return userRepository.findByUsernameStartingWithOrderByUsername(userName).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
-    public UserReadDTO updateUserField(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
+    public UserReadDTO updateUser(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
         User user = UserObjectMapper.mapUser(userCreateUpdateDTO, userRepository
                 .findUserById(userId).orElseThrow(() ->new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value())));
         return UserObjectMapper.toReadDTO(userRepository.save(user));

@@ -52,17 +52,9 @@ public class GameRESTService {
         //TODO reviews will be also deleted
     }
 
-    public void addVote(String gameId, int vote) throws GameNotFoundException {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
-        float currentVote = game.getVote();
-        int currentVoteCount = game.getVoteCount();
-        int newVoteCount = currentVoteCount + 1;
-        game.setVoteCount(newVoteCount);
-        float floatVote = (float) vote;
-        float newVote = ((currentVote * currentVoteCount) + floatVote) / newVoteCount;
-        game.setVote(newVote);
-        gameRepository.save(game);
+    public Game updateGame(String gameId, GameDTO gameDTO) throws GameNotFoundException {
+        Game updatedGame = GameObjectMapper.mapGame(gameDTO,gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("Game not found with given id: "+ gameId,HttpStatus.NOT_FOUND.value())));
+        return gameRepository.save(updatedGame);
     }
 
     public List<Game> getGamesByPublisher(String publisher){

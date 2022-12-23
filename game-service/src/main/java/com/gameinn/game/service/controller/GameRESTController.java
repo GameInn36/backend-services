@@ -6,7 +6,6 @@ import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.service.GameRESTService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +21,6 @@ public class GameRESTController {
     @Autowired
     public GameRESTController(GameRESTService gameRESTService){
         this.gameRESTService = gameRESTService;
-    }
-
-    @GetMapping("/hello")
-    public String hello(){
-        return"Hello from GameService!";
     }
 
     @PostMapping("/")
@@ -70,7 +64,7 @@ public class GameRESTController {
     }
 
     @PutMapping("/{game_id}")
-    public void updateGameVote(@PathVariable("game_id") String gameId, @RequestBody @Range(min = 0, max = 5) int vote) throws GameNotFoundException {
-        gameRESTService.addVote(gameId, vote);
+    public Game updateGameVote(@PathVariable("game_id") String gameId, @RequestBody GameDTO gameDTO) throws GameNotFoundException {
+        return gameRESTService.updateGame(gameId, gameDTO);
     }
 }
