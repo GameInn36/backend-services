@@ -15,7 +15,8 @@ public class UserReadDTO {
     private String bio;
     private String email;
     private List<String> toPlayList;
-    private List<String> followedFriends;
+    private List<String> following;
+    private List<String> followers;
     private List<String> favoriteGames;
     private List<GameLog> logs;
     private String profileImage;
@@ -26,7 +27,8 @@ public class UserReadDTO {
         this.bio = userReadDTOBuilder.bio;
         this.email = userReadDTOBuilder.email;
         this.toPlayList = userReadDTOBuilder.toPlayList;
-        this.followedFriends = userReadDTOBuilder.followedFriends;
+        this.followers = userReadDTOBuilder.followers;
+        this.following = userReadDTOBuilder.following;
         this.favoriteGames = userReadDTOBuilder.favoriteGames;
         this.logs = userReadDTOBuilder.logs;
         this.profileImage = userReadDTOBuilder.profileImage;
@@ -38,7 +40,8 @@ public class UserReadDTO {
         private String bio;
         private String email;
         private List<String> toPlayList;
-        private List<String> followedFriends;
+        private List<String> following;
+        private List<String> followers;
         private List<String> favoriteGames;
         private List<GameLog> logs;
         private String profileImage;
@@ -70,8 +73,13 @@ public class UserReadDTO {
             return this;
         }
 
-        public UserReadDTOBuilder setFollowedFriends(List<String> followedFriends) {
-            this.followedFriends = followedFriends;
+        public UserReadDTOBuilder setFollowers(List<String> followers) {
+            this.followers = followers;
+            return this;
+        }
+
+        public UserReadDTOBuilder setFollowing(List<String> following) {
+            this.following = following;
             return this;
         }
 

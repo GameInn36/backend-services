@@ -3,6 +3,7 @@ package com.gameinn.user.service.controller;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
+import com.gameinn.user.service.model.Game;
 import com.gameinn.user.service.service.UserRESTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,9 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/toPlayList")
-    public ResponseEntity<?> getToPlayList(@PathVariable String userId){
-        return null;
+    public List<Game> getToPlayList(@PathVariable String userId){
+        return userRESTService.getToPlayList(userId);
     }
-
 
     @PostMapping("/validate")
     public UserReadDTO validateUser(@RequestBody UserCreateUpdateDTO userCreateUpdateDTO){

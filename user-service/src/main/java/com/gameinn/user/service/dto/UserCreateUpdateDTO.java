@@ -32,5 +32,6 @@ public class UserCreateUpdateDTO {
             + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
     private String email;
     private List<String> favoriteGames;
+    private List<String> toPlayList;
     private String profileImage;
 }

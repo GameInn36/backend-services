@@ -47,9 +47,6 @@ public class ReviewRESTService {
     public List<Review> getReviewsByUserIdAndGameId(String userId, String gameId){
         return reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
     }
-    public String deneme(){
-        return gameService.hello();
-    }
 
     public Review deleteReview(String reviewId) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(reviewId)
