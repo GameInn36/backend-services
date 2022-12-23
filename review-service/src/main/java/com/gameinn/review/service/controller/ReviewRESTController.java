@@ -45,12 +45,6 @@ public class ReviewRESTController {
         return this.reviewRESTService.addReview(reviewCreateUpdateDTO);
     }
 
-
-    @GetMapping("/deneme")
-    public String deneme(){
-        return reviewRESTService.deneme();
-    }
-
     @DeleteMapping("/{review_id}")
     public Review deleteReview(@PathVariable("review_id") String reviewId) throws ReviewNotFoundException {
         return reviewRESTService.deleteReview(reviewId);

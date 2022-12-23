@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name="game-service", url = "${feign.gameservice.url}")
 public interface GameService{
-    @GetMapping("/game/hello")
-    String hello();
-
     @GetMapping("/game/{gameId}")
     Game getGame(@PathVariable String gameId);
 
