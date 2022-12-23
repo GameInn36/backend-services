@@ -59,11 +59,11 @@ public class ReviewRESTService {
         return reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
     }
 
-    public ReviewPageDTO getReviewPage(String userId){
+    public ReviewPageDTO getReviewPage(String userId) throws ReviewPageException {
         User requestOwner = userService.getUserById(userId);
         List<Review> reviews = reviewRepository.findAll().stream().sorted(Comparator.comparingInt(Review::getLikeCount)).sorted(Collections.reverseOrder()).collect(Collectors.toList());
         if(reviews.size() == 0){
-            throw new ReviewPageException("There are no reviews!",HttpStatus.NO_CONTENT.value());
+            throw new ReviewPageException("There are no reviews!",HttpStatus.NOT_FOUND.value());
         }
         int toIndex = Math.min(reviews.size(), 3);
         List<Review> mostPopularReviews = reviews.subList(0,toIndex);

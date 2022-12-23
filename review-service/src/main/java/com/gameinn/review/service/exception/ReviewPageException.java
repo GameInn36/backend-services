@@ -1,6 +1,6 @@
 package com.gameinn.review.service.exception;
 
-public class ReviewPageException extends RuntimeException{
+public class ReviewPageException extends Exception{
     private final int status;
 
     public ReviewPageException(String msg, int status){
