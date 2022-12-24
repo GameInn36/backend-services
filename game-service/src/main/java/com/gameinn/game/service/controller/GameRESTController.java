@@ -1,5 +1,6 @@
 package com.gameinn.game.service.controller;
 
+import com.gameinn.game.service.dto.DisplayGamesDTO;
 import com.gameinn.game.service.dto.GameDTO;
 import com.gameinn.game.service.dto.GamePageDTO;
 import com.gameinn.game.service.entity.Game;
@@ -55,6 +56,11 @@ public class GameRESTController {
     public GamePageDTO getGamePage(HttpServletRequest request, @PathVariable("game_id") String gameId) throws GameNotFoundException {
         String userId = JwtUtil.getSubject(JwtUtil.getToken(request));
         return gameRESTService.getGamePage(gameId,userId);
+    }
+
+    @GetMapping("/displayGames")
+    public DisplayGamesDTO displayGames(HttpServletRequest request){
+        return gameRESTService.getDisplayGamesPage(JwtUtil.getSubject(JwtUtil.getToken(request)));
     }
 
     @PostMapping("/")

@@ -20,6 +20,7 @@ public class UserObjectMapper {
         dest.setProfileImage(src.getProfileImage());
         dest.setFavoriteGames(src.getFavoriteGames());
         dest.setToPlayList(src.getToPlayList());
+        dest.setLogs(src.getLogs());
         return dest;
     }
     public static UserReadDTO toReadDTO(User user){

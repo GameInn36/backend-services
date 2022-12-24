@@ -1,5 +1,6 @@
 package com.gameinn.user.service.dto;
 
+import com.gameinn.user.service.dataTypes.GameLog;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,5 +34,6 @@ public class UserCreateUpdateDTO {
     private String email;
     private List<String> favoriteGames;
     private List<String> toPlayList;
+    private List<GameLog> logs;
     private String profileImage;
 }

@@ -14,4 +14,5 @@ public class User {
     private String username;
     private String profileImage;
     private List<String> following;
+    private List<GameLog> logs;
 }

@@ -1,13 +1,17 @@
 package com.gameinn.game.service.service;
 
+import com.gameinn.game.service.dto.DisplayGamesDTO;
 import com.gameinn.game.service.dto.GameDTO;
+import com.gameinn.game.service.dto.GameLogDTO;
 import com.gameinn.game.service.dto.GamePageDTO;
 import com.gameinn.game.service.entity.Game;
 import com.gameinn.game.service.exception.GameNotFoundException;
 import com.gameinn.game.service.feignClient.ReviewService;
 import com.gameinn.game.service.feignClient.UserService;
+import com.gameinn.game.service.model.GameLog;
 import com.gameinn.game.service.model.GamePageReview;
 import com.gameinn.game.service.model.Review;
+import com.gameinn.game.service.model.User;
 import com.gameinn.game.service.repository.GameRepository;
 import com.gameinn.game.service.util.GameObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,6 +104,31 @@ public class GameRESTService {
             gamePage.setFollowedFriendsReviews(new ArrayList<>());
         }
         return gamePage;
+    }
+
+    public DisplayGamesDTO getDisplayGamesPage(String userId){
+        DisplayGamesDTO displayGamesDTO = new DisplayGamesDTO();
+        List<Game> games = gameRepository.findAll().stream().sorted(Comparator.comparingLong(Game::getFirst_release_date)).collect(Collectors.toList());
+        displayGamesDTO.setNewGames(games.subList(0,5));
+        displayGamesDTO.setMostPopularGames(games.stream().filter((game -> game.getVoteCount() > 10)).sorted(Comparator.comparingDouble(Game::getVote)).sorted(Collections.reverseOrder()).collect(Collectors.toList()).subList(0,5));
+        List<User> users = userService.getAllUsers();
+        User requestOwner = users.stream().filter((user -> user.getId().equals(userId))).collect(Collectors.toList()).stream().findFirst().get();
+        if(requestOwner.getFollowing() != null && requestOwner.getFollowing().size() != 0){
+            List<User> friends = users.stream().filter((user -> requestOwner.getFollowing().contains(user.getId()))).collect(Collectors.toList());
+            List<GameLogDTO> friendLogs = new ArrayList<>();
+            for (User user: friends) {
+                if(user.getLogs() != null && user.getLogs().size() != 0){
+                    GameLogDTO gameLogDTO = new GameLogDTO();
+                    GameLog log = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getCreateDate)).collect(Collectors.toList()).get(0);
+                    gameLogDTO.setLog(log);
+                    gameLogDTO.setUser(user);
+                    gameLogDTO.setGame(games.stream().filter(game -> game.getId().equals(log.getGameId())).findFirst().get());
+                    friendLogs.add(gameLogDTO);
+                }
+            }
+            displayGamesDTO.setNewsFromFriends(friendLogs);
+        }
+        return displayGamesDTO;
     }
 
     public Game updateVote(String gameId, float vote) throws GameNotFoundException

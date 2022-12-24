@@ -1,5 +1,6 @@
 package com.gameinn.user.service.controller;
 
+import com.gameinn.user.service.dataTypes.GameLog;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
@@ -64,6 +65,11 @@ public class UserController {
             throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
         return ResponseEntity.ok(userRESTService.addUser(newUser));
+    }
+
+    @PostMapping("/{userId}/log/")
+    public UserReadDTO addGameLog(@PathVariable String userId, @RequestBody GameLog log){
+        return userRESTService.addGameLog(userId,log);
     }
 
     @PutMapping("/{userId}")

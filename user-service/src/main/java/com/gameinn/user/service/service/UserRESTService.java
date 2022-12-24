@@ -1,5 +1,6 @@
 package com.gameinn.user.service.service;
 
+import com.gameinn.user.service.dataTypes.GameLog;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.entity.User;
@@ -112,5 +113,15 @@ public class UserRESTService {
         userRepository.save(destUser);
 
         return UserObjectMapper.toReadDTO(sourceUser);
+    }
+
+    public UserReadDTO addGameLog(String userId, GameLog log){
+        User user = userRepository.findUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        if(user.getLogs() == null){
+            user.setLogs(new ArrayList<>());
+        }
+        user.getLogs().add(log);
+        return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 }

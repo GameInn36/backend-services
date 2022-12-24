@@ -55,6 +55,16 @@ public class ReviewRESTController {
         return this.reviewRESTService.addReview(reviewCreateUpdateDTO);
     }
 
+    @PostMapping("/{reviewId}/like")
+    public void likeReview(HttpServletRequest request, @PathVariable String reviewId) throws ReviewNotFoundException {
+        reviewRESTService.likeReview(JwtUtil.getSubject(JwtUtil.getToken(request)),reviewId);
+    }
+
+    @PostMapping("/{reviewId}/unlike")
+    public void unlikeReview(HttpServletRequest request, @PathVariable String reviewId) throws ReviewNotFoundException {
+        reviewRESTService.unlikeReview(JwtUtil.getSubject(JwtUtil.getToken(request)),reviewId);
+    }
+
     @DeleteMapping("/{review_id}")
     public Review deleteReview(@PathVariable("review_id") String reviewId) throws ReviewNotFoundException {
         return reviewRESTService.deleteReview(reviewId);

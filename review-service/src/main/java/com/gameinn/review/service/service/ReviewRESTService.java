@@ -102,4 +102,18 @@ public class ReviewRESTService {
         reviewRepository.deleteById(reviewId);
         return review;
     }
+
+    public void likeReview(String userId, String reviewId) throws ReviewNotFoundException {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
+        review.getLikedUsers().add(userId);
+        reviewRepository.save(review);
+    }
+
+    public void unlikeReview(String userId, String reviewId) throws ReviewNotFoundException {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
+        review.getLikedUsers().remove(userId);
+        reviewRepository.save(review);
+    }
 }
