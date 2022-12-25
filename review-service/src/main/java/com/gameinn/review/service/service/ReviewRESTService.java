@@ -44,56 +44,19 @@ public class ReviewRESTService {
         return reviewRepository.insert(newReview);
     }
 
-    public List<ReviewReadDTO> getAllReviews(){
-        List<ReviewReadDTO> reviewReadDTOS = new ArrayList<>();
-        List<Review> reviews = reviewRepository.findAll();
-        for (Review review: reviews) {
-            ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
-            reviewReadDTO.setReview(review);
-            reviewReadDTO.setGame(gameService.getGame(review.getGameId()));
-            reviewReadDTO.setUser(userService.getUserById(review.getUserId()));
-            reviewReadDTOS.add(reviewReadDTO);
-        }
-        return reviewReadDTOS;
+    public List<Review> getAllReviews(){
+        return reviewRepository.findAll();
     }
-    public List<ReviewReadDTO> getReviewsByGameId(String gameId){
-
-        List<ReviewReadDTO> reviewReadDTOS = new ArrayList<>();
-        List<Review> reviews = reviewRepository.getReviewsByGameIdOrderByLikeCountDesc(gameId);
-        for (Review review: reviews) {
-            ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
-            reviewReadDTO.setReview(review);
-            reviewReadDTO.setGame(gameService.getGame(review.getGameId()));
-            reviewReadDTO.setUser(userService.getUserById(review.getUserId()));
-            reviewReadDTOS.add(reviewReadDTO);
-        }
-        return reviewReadDTOS;
+    public List<Review> getReviewsByGameId(String gameId){
+        return reviewRepository.getReviewsByGameIdOrderByLikeCountDesc(gameId);
     }
 
-    public List<ReviewReadDTO> getReviewsByUserId(String userId){
-        List<ReviewReadDTO> reviewReadDTOS = new ArrayList<>();
-        List<Review> reviews = reviewRepository.getReviewsByUserIdOrderByLikeCountDesc(userId);
-        for (Review review: reviews) {
-            ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
-            reviewReadDTO.setReview(review);
-            reviewReadDTO.setGame(gameService.getGame(review.getGameId()));
-            reviewReadDTO.setUser(userService.getUserById(review.getUserId()));
-            reviewReadDTOS.add(reviewReadDTO);
-        }
-        return reviewReadDTOS;
+    public List<Review> getReviewsByUserId(String userId){
+        return reviewRepository.getReviewsByUserIdOrderByLikeCountDesc(userId);
     }
 
-    public List<ReviewReadDTO> getReviewsByUserIdAndGameId(String userId, String gameId){
-        List<ReviewReadDTO> reviewReadDTOS = new ArrayList<>();
-        List<Review> reviews = reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
-        for (Review review: reviews) {
-            ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
-            reviewReadDTO.setReview(review);
-            reviewReadDTO.setGame(gameService.getGame(review.getGameId()));
-            reviewReadDTO.setUser(userService.getUserById(review.getUserId()));
-            reviewReadDTOS.add(reviewReadDTO);
-        }
-        return reviewReadDTOS;
+    public List<Review> getReviewsByUserIdAndGameId(String userId, String gameId){
+        return reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
     }
 
     public ReviewPageDTO getReviewPage(String userId) throws ReviewPageException {

@@ -1,7 +1,6 @@
 package com.gameinn.review.service.controller;
 import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.dto.ReviewPageDTO;
-import com.gameinn.review.service.dto.ReviewReadDTO;
 import com.gameinn.review.service.entity.Review;
 import com.gameinn.review.service.exception.ImproperReviewException;
 import com.gameinn.review.service.exception.ReviewNotFoundException;
@@ -31,7 +30,7 @@ public class ReviewRESTController {
     }
 
     @GetMapping("/")
-    public List<ReviewReadDTO> getAllReviews(@RequestParam(required = false) String userId, @RequestParam(required = false) String gameId){
+    public List<Review> getAllReviews(@RequestParam(required = false) String userId, @RequestParam(required = false) String gameId){
         if(gameId != null && userId != null){
             return this.reviewRESTService.getReviewsByUserIdAndGameId(userId,gameId);
         }
