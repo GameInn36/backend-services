@@ -53,6 +53,16 @@ public class UserController {
         return userRESTService.getToPlayList(userId);
     }
 
+    @GetMapping("/{userId}/followers")
+    public List<UserReadDTO> getFollowers(@PathVariable String userId){
+        return userRESTService.getFollowers(userId);
+    }
+
+    @GetMapping("/{userId}/following")
+    public List<UserReadDTO> getFollowing(@PathVariable String userId){
+        return userRESTService.getFollowing(userId);
+    }
+
     @PostMapping("/validate")
     public UserReadDTO validateUser(@RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
         return userRESTService.getUserByEmailAndPassword(userCreateUpdateDTO);

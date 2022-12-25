@@ -124,4 +124,20 @@ public class UserRESTService {
         user.getLogs().add(log);
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
+
+    public List<UserReadDTO> getFollowing(String userId){
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        if(user.getFollowing() != null && user.getFollowing().size() != 0){
+            return userRepository.findAll().stream().filter((u) -> user.getFollowing().contains(u.getId())).map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    public List<UserReadDTO> getFollowers(String userId){
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        if(user.getFollowers() != null && user.getFollowers().size() != 0){
+            return userRepository.findAll().stream().filter((u) -> user.getFollowers().contains(u.getId())).map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
 }
