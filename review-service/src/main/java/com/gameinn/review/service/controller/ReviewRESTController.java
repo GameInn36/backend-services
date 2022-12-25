@@ -3,16 +3,19 @@ import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.dto.ReviewPageDTO;
 import com.gameinn.review.service.dto.ReviewReadDTO;
 import com.gameinn.review.service.entity.Review;
+import com.gameinn.review.service.exception.ImproperReviewException;
 import com.gameinn.review.service.exception.ReviewNotFoundException;
 import com.gameinn.review.service.exception.ReviewPageException;
 import com.gameinn.review.service.service.ReviewRESTService;
 import com.gameinn.review.service.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.*;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/review")
@@ -47,12 +50,11 @@ public class ReviewRESTController {
         return reviewRESTService.getReviewPage(userId);
     }
     @PostMapping("/")
-    public Review addReview(@RequestBody @Valid ReviewCreateUpdateDTO reviewCreateUpdateDTO){
-        /*Set<ConstraintViolation<ReviewDTO>> violations = validator.validate(reviewDTO);
-        for (ConstraintViolation<ReviewDTO> violation : violations) {
-            System.out.println(violation.getMessage());
-        }*/
-
+    public Review addReview(@RequestBody ReviewCreateUpdateDTO reviewCreateUpdateDTO){
+        Set<ConstraintViolation<ReviewCreateUpdateDTO>> violations = validator.validate(reviewCreateUpdateDTO);
+        if(!violations.isEmpty()){
+            throw new ImproperReviewException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
+        }
         return this.reviewRESTService.addReview(reviewCreateUpdateDTO);
     }
 
