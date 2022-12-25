@@ -34,11 +34,14 @@ public class UserController {
         this.validator = validator;
     }
     @GetMapping("/")
-    public List<UserReadDTO> getUsers(@RequestParam(required = false) String username)
+    public List<UserReadDTO> getUsers(@RequestParam(required = false) String username, @RequestParam(required = false) List<String> userIds)
     {
         List<UserReadDTO> users;
         if(username!=null){
             users = userRESTService.getUserByUsername(username);
+        }
+        else if(userIds != null){
+            users = userRESTService.getUsersById(userIds);
         }
         else{
             users = userRESTService.getAllUsers();

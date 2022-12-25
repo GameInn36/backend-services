@@ -29,7 +29,7 @@ public class GameRESTController {
 
 
     @GetMapping("/")
-    public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String publisher, @RequestParam(required = false) String[] platforms)
+    public List<Game> getAllGames(@RequestParam(required = false) String name,@RequestParam(required = false) String publisher, @RequestParam(required = false) String[] platforms, @RequestParam(required = false) List<String> gameIds)
     {
         List<Game> games;
         if(name!= null){
@@ -40,6 +40,9 @@ public class GameRESTController {
         }
         else if(platforms != null){
             games = gameRESTService.getGamesByPlatform(platforms);
+        }
+        else if(gameIds != null){
+            games = gameRESTService.getAllGamesById(gameIds);
         }
         else{
             games = gameRESTService.getAllGames();
@@ -59,7 +62,7 @@ public class GameRESTController {
     }
 
     @GetMapping("/displayGames")
-    public DisplayGamesDTO displayGames(HttpServletRequest request){
+    public DisplayGamesDTO displayGames(HttpServletRequest request) throws GameNotFoundException {
         return gameRESTService.getDisplayGamesPage(JwtUtil.getSubject(JwtUtil.getToken(request)));
     }
 
@@ -89,5 +92,4 @@ public class GameRESTController {
     public void increaseLogCount(@PathVariable String gameId) throws GameNotFoundException {
         gameRESTService.increaseLogCount(gameId);
     }
-
 }

@@ -47,6 +47,10 @@ public class UserRESTService {
                         .orElseThrow(() -> new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value())));
     }
 
+    public List<UserReadDTO> getUsersById(List<String> userIds){
+        return ((List<User>) userRepository.findAllById(userIds)).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+    }
+
     public UserReadDTO getUserByEmailAndPassword(UserCreateUpdateDTO userCreateUpdateDTO){
         User user = userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword())
                 .orElseThrow(() -> new UserNotFoundException("There is no user matches with given email-password", HttpStatus.NOT_FOUND.value()));
@@ -68,8 +72,7 @@ public class UserRESTService {
         if(gameIds == null){
             return new ArrayList<>();
         }
-        List<Game> allGames = gameService.getAllGames();
-        return allGames.stream().filter((game -> gameIds.contains(game.getId()))).collect(Collectors.toList());
+        return gameService.getAllGames(gameIds);
     }
 
     public UserReadDTO followUser(String sourceId, String destId)
@@ -132,7 +135,7 @@ public class UserRESTService {
     public List<UserReadDTO> getFollowing(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getFollowing() != null && user.getFollowing().size() != 0){
-            return userRepository.findAll().stream().filter((u) -> user.getFollowing().contains(u.getId())).map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+            return ((List<User>) userRepository.findAllById(user.getFollowing())).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -140,7 +143,7 @@ public class UserRESTService {
     public List<UserReadDTO> getFollowers(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getFollowers() != null && user.getFollowers().size() != 0){
-            return userRepository.findAll().stream().filter((u) -> user.getFollowers().contains(u.getId())).map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+            return ((List<User>) userRepository.findAllById(user.getFollowers())).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -148,7 +151,7 @@ public class UserRESTService {
     public List<Game> getFavoriteGames(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
-            return gameService.getAllGames().stream().filter((game) -> user.getFavoriteGames().contains(game.getId())).collect(Collectors.toList());
+            return gameService.getAllGames(user.getFavoriteGames());
         }
         return new ArrayList<>();
     }
@@ -156,7 +159,8 @@ public class UserRESTService {
     public List<GameLogDTO> getGameLogs(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getLogs() != null && user.getLogs().size() != 0){
-            List<Game> games = gameService.getAllGames();
+            List<String> gameIds = user.getLogs().stream().map(GameLog::getGameId).collect(Collectors.toList());
+            List<Game> games = gameService.getAllGames(gameIds);
             List<GameLogDTO> logs = new ArrayList<>();
             for (GameLog log : user.getLogs()) {
                 for (Game game: games) {
@@ -178,17 +182,15 @@ public class UserRESTService {
         UserProfilePageDTO userProfilePageDTO = new UserProfilePageDTO();
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         userProfilePageDTO.setUser(UserObjectMapper.toReadDTO(user));
-        List<Game> games = null;
-        if((user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0) || (user.getLogs() != null && user.getLogs().size() != 0)) {
-            games = gameService.getAllGames();
-        }
         if(user.getLogs() != null && user.getLogs().size() != 0){
-            List<String> gameIds = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getCreateDate).reversed()).map(GameLog::getGameId).collect(Collectors.toList());
-            userProfilePageDTO.setRecentlyPlayedGames(games.stream().filter((game) -> gameIds.contains(game.getId())).collect(Collectors.toList()));
+            int toIndex = Math.min(user.getLogs().size(),5);
+            List<String> gameIds = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getStartDate).reversed()).map(GameLog::getGameId).collect(Collectors.toList()).subList(0,toIndex);
+            userProfilePageDTO.setRecentlyPlayedGames(gameService.getAllGames(gameIds));
         }
         if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
-            userProfilePageDTO.setFavoriteGames(games.stream().filter((game)-> user.getFavoriteGames().contains(game.getId())).collect(Collectors.toList()));
+            userProfilePageDTO.setFavoriteGames(gameService.getAllGames(user.getFavoriteGames()));
         }
+
         return userProfilePageDTO;
     }
 }

@@ -52,6 +52,10 @@ public class GameRESTService {
         return gameRepository.findAll();
     }
 
+    public List<Game> getAllGamesById(List<String> gameIds){
+        return (List<Game>) gameRepository.findAllById(gameIds);
+    }
+
     public Game deleteGame(String gameId) throws GameNotFoundException {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
@@ -82,9 +86,11 @@ public class GameRESTService {
         gamePage.setGame(getGame(gameId));
         gamePage.setReviews(new ArrayList<>());
         List<Review> reviews = reviewService.getReviewsByGameId(gameId);
+        List<String> userIds = reviews.stream().map(Review::getUserId).collect(Collectors.toList());
+        List<User> users = userService.getAllUsers(userIds);
         for (Review review:reviews) {
             GamePageReview gamePageReview = new GamePageReview.Builder()
-                    .setUser(userService.getUserById(review.getUserId()))
+                    .setUser(users.stream().filter((user)-> user.getId().equals(review.getUserId())).findFirst().orElseThrow(RuntimeException::new))
                     .setId(review.getId())
                     .setContext(review.getContext())
                     .setCreatedAt(review.getCreatedAt())
@@ -107,15 +113,14 @@ public class GameRESTService {
         return gamePage;
     }
 
-    public DisplayGamesDTO getDisplayGamesPage(String userId){
+    public DisplayGamesDTO getDisplayGamesPage(String userId) throws GameNotFoundException {
         DisplayGamesDTO displayGamesDTO = new DisplayGamesDTO();
         List<Game> games = gameRepository.findAll().stream().sorted(Comparator.comparingLong(Game::getFirst_release_date)).collect(Collectors.toList());
         displayGamesDTO.setNewGames(games.subList(0,5));
         displayGamesDTO.setMostPopularGames(games.stream().sorted(Comparator.comparingDouble(Game::getVote).reversed()).collect(Collectors.toList()).subList(0,5));
-        List<User> users = userService.getAllUsers();
-        User requestOwner = users.stream().filter((user -> user.getId().equals(userId))).collect(Collectors.toList()).stream().findFirst().get();
+        User requestOwner = userService.getUserById(userId);
         if(requestOwner.getFollowing() != null && requestOwner.getFollowing().size() != 0){
-            List<User> friends = users.stream().filter((user -> requestOwner.getFollowing().contains(user.getId()))).collect(Collectors.toList());
+            List<User> friends = userService.getAllUsers(requestOwner.getFollowing());
             List<GameLogDTO> friendLogs = new ArrayList<>();
             for (User user: friends) {
                 if(user.getLogs() != null && user.getLogs().size() != 0){
@@ -123,7 +128,7 @@ public class GameRESTService {
                     GameLog log = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getCreateDate)).collect(Collectors.toList()).get(0);
                     gameLogDTO.setLog(log);
                     gameLogDTO.setUser(user);
-                    gameLogDTO.setGame(games.stream().filter(game -> game.getId().equals(log.getGameId())).findFirst().get());
+                    gameLogDTO.setGame(gameRepository.findById(log.getGameId()).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+log.getGameId(), HttpStatus.NOT_FOUND.value())));
                     friendLogs.add(gameLogDTO);
                 }
             }
