@@ -40,7 +40,7 @@ public class ReviewRESTController {
         return this.reviewRESTService.getAllReviews();
     }
 
-    @GetMapping("/reviewPage")
+    @GetMapping("/displayReviews")
     public ReviewPageDTO getReviewPage(HttpServletRequest request) throws ReviewPageException {
         String userId = JwtUtil.getSubject(JwtUtil.getToken(request));
         return reviewRESTService.getReviewPage(userId);

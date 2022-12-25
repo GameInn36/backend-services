@@ -22,7 +22,7 @@ public class Game {
     private List<String> genres;
     private String publisher;
     private List<String> platforms;
-    private float vote;
+    private double vote;
     private int voteCount;
     private long first_release_date;
 
@@ -47,7 +47,7 @@ public class Game {
         private List<String> genres;
         private String publisher;
         private List<String> platforms;
-        private float vote;
+        private double vote;
         private int voteCount;
         private long first_release_date;
 
@@ -89,7 +89,7 @@ public class Game {
             return this;
         }
 
-        public GameBuilder setVote(float vote) {
+        public GameBuilder setVote(double vote) {
             this.vote = vote;
             return this;
         }

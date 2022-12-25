@@ -1,6 +1,7 @@
 package com.gameinn.user.service.controller;
 
 import com.gameinn.user.service.dataTypes.GameLog;
+import com.gameinn.user.service.dto.GameLogDTO;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
@@ -46,6 +47,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserReadDTO getUserById(@PathVariable String userId){
         return userRESTService.getUserById(userId);
+    }
+
+    @GetMapping("/{userId}/logs")
+    public List<GameLogDTO> getLogs(@PathVariable String userId){
+        return userRESTService.getGameLogs(userId);
     }
 
     @GetMapping("/{userId}/toPlayList")

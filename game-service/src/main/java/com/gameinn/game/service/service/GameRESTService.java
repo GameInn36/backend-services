@@ -14,16 +14,17 @@ import com.gameinn.game.service.model.Review;
 import com.gameinn.game.service.model.User;
 import com.gameinn.game.service.repository.GameRepository;
 import com.gameinn.game.service.util.GameObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class GameRESTService {
     private final GameRepository gameRepository;
@@ -110,7 +111,7 @@ public class GameRESTService {
         DisplayGamesDTO displayGamesDTO = new DisplayGamesDTO();
         List<Game> games = gameRepository.findAll().stream().sorted(Comparator.comparingLong(Game::getFirst_release_date)).collect(Collectors.toList());
         displayGamesDTO.setNewGames(games.subList(0,5));
-        displayGamesDTO.setMostPopularGames(games.stream().filter((game -> game.getVoteCount() > 10)).sorted(Comparator.comparingDouble(Game::getVote)).sorted(Collections.reverseOrder()).collect(Collectors.toList()).subList(0,5));
+        displayGamesDTO.setMostPopularGames(games.stream().sorted(Comparator.comparingDouble(Game::getVote).reversed()).collect(Collectors.toList()).subList(0,5));
         List<User> users = userService.getAllUsers();
         User requestOwner = users.stream().filter((user -> user.getId().equals(userId))).collect(Collectors.toList()).stream().findFirst().get();
         if(requestOwner.getFollowing() != null && requestOwner.getFollowing().size() != 0){
@@ -131,7 +132,7 @@ public class GameRESTService {
         return displayGamesDTO;
     }
 
-    public Game updateVote(String gameId, float vote) throws GameNotFoundException
+    public Game updateVote(String gameId, double vote) throws GameNotFoundException
     {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
@@ -139,10 +140,10 @@ public class GameRESTService {
         int addedVoteCount = vote >= 0 ? 1 : -1;
 
         int gameVoteCount = game.getVoteCount();
-        float gameVote = game.getVote();
+        double gameVote = game.getVote();
 
         int newGameVoteCount = gameVoteCount + addedVoteCount;
-        float newVote;
+        double newVote;
 
         if(newGameVoteCount == 0)
         {
