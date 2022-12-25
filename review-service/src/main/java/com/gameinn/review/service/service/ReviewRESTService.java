@@ -107,6 +107,7 @@ public class ReviewRESTService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
         review.getLikedUsers().add(userId);
+        review.setLikeCount(review.getLikedUsers().size());
         reviewRepository.save(review);
     }
 
@@ -114,6 +115,7 @@ public class ReviewRESTService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
         review.getLikedUsers().remove(userId);
+        review.setLikeCount(review.getLikedUsers().size());
         reviewRepository.save(review);
     }
 }
