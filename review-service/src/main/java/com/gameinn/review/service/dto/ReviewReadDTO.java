@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +14,4 @@ public class ReviewReadDTO {
     private Review review;
     private Game game;
     private User user;
-    private List<String> likedUsers;
 }

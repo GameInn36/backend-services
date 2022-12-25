@@ -3,6 +3,7 @@ package com.gameinn.user.service.service;
 import com.gameinn.user.service.dataTypes.GameLog;
 import com.gameinn.user.service.dto.GameLogDTO;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
+import com.gameinn.user.service.dto.UserProfilePageDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.entity.User;
 import com.gameinn.user.service.exception.UserNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -143,6 +145,14 @@ public class UserRESTService {
         return new ArrayList<>();
     }
 
+    public List<Game> getFavoriteGames(String userId){
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
+            return gameService.getAllGames().stream().filter((game) -> user.getFavoriteGames().contains(game.getId())).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
     public List<GameLogDTO> getGameLogs(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getLogs() != null && user.getLogs().size() != 0){
@@ -162,5 +172,23 @@ public class UserRESTService {
             return logs;
         }
         return new ArrayList<>();
+    }
+
+    public UserProfilePageDTO getProfilePage(String userId){
+        UserProfilePageDTO userProfilePageDTO = new UserProfilePageDTO();
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        userProfilePageDTO.setUser(UserObjectMapper.toReadDTO(user));
+        List<Game> games = null;
+        if((user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0) || (user.getLogs() != null && user.getLogs().size() != 0)) {
+            games = gameService.getAllGames();
+        }
+        if(user.getLogs() != null && user.getLogs().size() != 0){
+            List<String> gameIds = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getCreateDate).reversed()).map(GameLog::getGameId).collect(Collectors.toList());
+            userProfilePageDTO.setRecentlyPlayedGames(games.stream().filter((game) -> gameIds.contains(game.getId())).collect(Collectors.toList()));
+        }
+        if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
+            userProfilePageDTO.setFavoriteGames(games.stream().filter((game)-> user.getFavoriteGames().contains(game.getId())).collect(Collectors.toList()));
+        }
+        return userProfilePageDTO;
     }
 }

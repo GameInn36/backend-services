@@ -3,6 +3,7 @@ package com.gameinn.user.service.controller;
 import com.gameinn.user.service.dataTypes.GameLog;
 import com.gameinn.user.service.dto.GameLogDTO;
 import com.gameinn.user.service.dto.UserCreateUpdateDTO;
+import com.gameinn.user.service.dto.UserProfilePageDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
 import com.gameinn.user.service.model.Game;
@@ -49,6 +50,11 @@ public class UserController {
         return userRESTService.getUserById(userId);
     }
 
+    @GetMapping("/{userId}/profilePage")
+    public UserProfilePageDTO getUserProfilePage(@PathVariable String userId){
+        return userRESTService.getProfilePage(userId);
+    }
+
     @GetMapping("/{userId}/logs")
     public List<GameLogDTO> getLogs(@PathVariable String userId){
         return userRESTService.getGameLogs(userId);
@@ -67,6 +73,11 @@ public class UserController {
     @GetMapping("/{userId}/following")
     public List<UserReadDTO> getFollowing(@PathVariable String userId){
         return userRESTService.getFollowing(userId);
+    }
+
+    @GetMapping("/{userId}/favoriteGames")
+    public List<Game> getFavoriteGames(@PathVariable String userId){
+        return userRESTService.getFavoriteGames(userId);
     }
 
     @PostMapping("/validate")
