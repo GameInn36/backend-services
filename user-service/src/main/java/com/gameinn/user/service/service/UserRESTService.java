@@ -123,6 +123,7 @@ public class UserRESTService {
             user.setLogs(new ArrayList<>());
         }
         user.getLogs().add(log);
+        gameService.increaseLogCount(log.getGameId());
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 

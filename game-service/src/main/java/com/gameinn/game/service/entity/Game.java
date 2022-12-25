@@ -26,6 +26,8 @@ public class Game {
     private int voteCount;
     private long first_release_date;
 
+    private long logCount;
+
     private Game(GameBuilder gameBuilder){
         this.id = gameBuilder.id;
         this.name = gameBuilder.name;
@@ -50,6 +52,7 @@ public class Game {
         private double vote;
         private int voteCount;
         private long first_release_date;
+        private long logCount;
 
         public GameBuilder(String name){
             this.name = name;
@@ -101,6 +104,11 @@ public class Game {
 
         public GameBuilder setFirst_release_date(long first_release_date) {
             this.first_release_date = first_release_date;
+            return this;
+        }
+
+        public GameBuilder setLogCount(long logCount) {
+            this.logCount = logCount;
             return this;
         }
 

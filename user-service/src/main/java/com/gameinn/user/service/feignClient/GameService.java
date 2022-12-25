@@ -10,4 +10,7 @@ import java.util.List;
 public interface GameService{
     @GetMapping("/game/")
     List<Game> getAllGames();
+
+    @PutMapping("/{gameId}/increaseLogCount")
+    void increaseLogCount(String gameId);
 }

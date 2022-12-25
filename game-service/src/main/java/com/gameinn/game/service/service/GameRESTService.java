@@ -159,4 +159,10 @@ public class GameRESTService {
 
         return gameRepository.save(game);
     }
+
+    public void increaseLogCount(String gameId) throws GameNotFoundException {
+        Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
+        game.setLogCount(game.getLogCount()+1);
+        gameRepository.save(game);
+    }
 }

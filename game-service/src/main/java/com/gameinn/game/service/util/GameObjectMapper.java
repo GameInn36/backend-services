@@ -13,6 +13,7 @@ public class GameObjectMapper {
                 .setCover(gameDTO.getCover())
                 .setPublisher(gameDTO.getPublisher())
                 .setSummary(gameDTO.getSummary())
+                .setLogCount(gameDTO.getLogCount())
                 .build();
     }
 
@@ -24,6 +25,7 @@ public class GameObjectMapper {
         dest.setPublisher(src.getPublisher());
         dest.setPlatforms(src.getPlatforms());
         dest.setFirst_release_date(src.getFirst_release_date());
+        dest.setLogCount(src.getLogCount());
         return dest;
     }
 }

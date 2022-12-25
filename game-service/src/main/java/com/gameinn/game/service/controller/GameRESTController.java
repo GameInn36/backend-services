@@ -85,5 +85,9 @@ public class GameRESTController {
         return gameRESTService.updateGame(gameId, gameDTO);
     }
 
+    @PutMapping("/{gameId}/increaseLogCount")
+    public void increaseLogCount(@PathVariable String gameId) throws GameNotFoundException {
+        gameRESTService.increaseLogCount(gameId);
+    }
 
 }

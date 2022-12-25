@@ -17,4 +17,5 @@ public class GameDTO {
     private String publisher;
     private List<String> platforms;
     private long first_release_date;
+    private long logCount;
 }
