@@ -58,7 +58,7 @@ public class UserRESTService {
     }
 
     public List<UserReadDTO> getUserByUsername(String userName){
-        return userRepository.findByUsernameStartingWithOrderByUsername(userName).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
+        return userRepository.findByUsernameContainingIgnoreCaseOrderByUsername(userName).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
     public UserReadDTO updateUser(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
