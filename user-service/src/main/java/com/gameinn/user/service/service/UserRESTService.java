@@ -87,7 +87,7 @@ public class UserRESTService {
             sourceUser.setFollowing(new ArrayList<>());
         }
 
-        if(destUser.getFollowing() == null)
+        if(destUser.getFollowers() == null)
         {
             destUser.setFollowers(new ArrayList<>());
         }
