@@ -13,7 +13,8 @@ public class User {
     private String bio;
     private String email;
     private List<String> toPlayList;
-    private List<String> followedFriends;
+    private List<String> following;
+    private List<String> followers;
     private List<String> favoriteGames;
     private List<GameLog> logs;
     private String profileImage;
