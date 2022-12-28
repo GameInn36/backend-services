@@ -1,6 +1,7 @@
 package com.gameinn.review.service.controller;
 import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.dto.ReviewPageDTO;
+import com.gameinn.review.service.dto.ReviewReadDTO;
 import com.gameinn.review.service.entity.Review;
 import com.gameinn.review.service.exception.ImproperReviewException;
 import com.gameinn.review.service.exception.ReviewNotFoundException;
@@ -43,6 +44,11 @@ public class ReviewRESTController {
         return this.reviewRESTService.getAllReviews();
     }
 
+    @GetMapping("/reviewsPage")
+    public List<ReviewReadDTO> getReviewsByUserId(@RequestParam String userId){
+        return reviewRESTService.getReviewsByUserIdAsReviewReadDTO(userId);
+    }
+
     @GetMapping("/displayReviews")
     public ReviewPageDTO getReviewPage(HttpServletRequest request) throws ReviewPageException {
         String userId = JwtUtil.getSubject(JwtUtil.getToken(request));
@@ -65,6 +71,15 @@ public class ReviewRESTController {
     @PostMapping("/{reviewId}/unlike")
     public void unlikeReview(HttpServletRequest request, @PathVariable String reviewId) throws ReviewNotFoundException {
         reviewRESTService.unlikeReview(JwtUtil.getSubject(JwtUtil.getToken(request)),reviewId);
+    }
+
+    @PutMapping("/{reviewId}")
+    public Review updateReview(@PathVariable String reviewId, @RequestBody ReviewCreateUpdateDTO reviewCreateUpdateDTO) throws ReviewNotFoundException {
+        Set<ConstraintViolation<ReviewCreateUpdateDTO>> violations = validator.validate(reviewCreateUpdateDTO);
+        if(!violations.isEmpty()){
+            throw new ImproperReviewException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
+        }
+        return reviewRESTService.updateReview(reviewId,reviewCreateUpdateDTO);
     }
 
     @DeleteMapping("/{review_id}")

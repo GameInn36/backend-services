@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.gameinn.review.service.model.Game;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +40,8 @@ public class ReviewRESTService {
         Game gameVoteDTO = new Game();
         gameVoteDTO.setVote(newReview.getVote());
         gameService.updateVote(gameId, gameVoteDTO);
-        return reviewRepository.insert(newReview);
+        Review result = reviewRepository.insert(newReview);
+        return result;
     }
 
     public List<Review> getAllReviews(){
@@ -59,9 +59,24 @@ public class ReviewRESTService {
         return reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc(userId,gameId);
     }
 
+    public List<ReviewReadDTO> getReviewsByUserIdAsReviewReadDTO(String userId){
+        List<Review> userReviews = reviewRepository.getReviewsByUserIdOrderByLikeCountDesc(userId);
+        List<String> gameIds = userReviews.stream().map(Review::getGameId).collect(Collectors.toList());
+        List<Game> games = gameService.getAllGamesByGameId(gameIds);
+        List<ReviewReadDTO> result = new ArrayList<>();
+        for (Review review: userReviews) {
+            ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
+            reviewReadDTO.setReview(review);
+            reviewReadDTO.setGame(games.stream().filter((game)-> game.getId().equals(review.getGameId())).findFirst().get());
+            reviewReadDTO.setUser(null);
+            result.add(reviewReadDTO);
+        }
+        return result;
+    }
+
     public ReviewPageDTO getReviewPage(String userId) throws ReviewPageException {
         User requestOwner = userService.getUserById(userId);
-        List<Review> reviews = reviewRepository.findAll().stream().sorted(Comparator.comparingInt(Review::getLikeCount)).sorted(Collections.reverseOrder()).collect(Collectors.toList());
+        List<Review> reviews = reviewRepository.findAll().stream().sorted(Comparator.comparingInt(Review::getLikeCount).reversed()).collect(Collectors.toList());
         if(reviews.size() == 0){
             throw new ReviewPageException("There are no reviews!",HttpStatus.NOT_FOUND.value());
         }
@@ -78,7 +93,7 @@ public class ReviewRESTService {
             reviewPageDTO.getMostPopularReviews().add(reviewReadDTO);
         }
         if(requestOwner.getFollowing() != null){
-            reviews = reviews.stream().filter((review -> requestOwner.getFollowing().contains(review.getUserId()))).sorted(Comparator.comparingLong(Review::getCreatedAt)).sorted(Collections.reverseOrder()).collect(Collectors.toList());
+            reviews = reviews.stream().filter((review -> requestOwner.getFollowing().contains(review.getUserId()))).sorted(Comparator.comparingLong(Review::getCreatedAt).reversed()).collect(Collectors.toList());
             toIndex = Math.min(reviews.size(), 3);
             List<Review> friendReviews = reviews.subList(0,toIndex);
             for (Review review: friendReviews) {
@@ -91,6 +106,23 @@ public class ReviewRESTService {
         }
 
         return reviewPageDTO;
+    }
+
+    public Review updateReview(String reviewId, ReviewCreateUpdateDTO reviewCreateUpdateDTO) throws ReviewNotFoundException {
+        Review updatedReview = ReviewObjectMapper.toEntity(reviewCreateUpdateDTO);
+        Review oldReview = reviewRepository.findById(reviewId).orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
+        updatedReview.setCreatedAt(oldReview.getCreatedAt());
+        updatedReview.setUpdatedAt(System.currentTimeMillis() / 1000L);
+        updatedReview.setLikedUsers(oldReview.getLikedUsers());
+        updatedReview.setLikeCount(oldReview.getLikeCount());
+        updatedReview.setId(oldReview.getId());
+        Game updateVoteGame = new Game();
+        updateVoteGame.setVote(-oldReview.getVote());
+        gameService.updateVote(oldReview.getGameId(),updateVoteGame);
+        updateVoteGame.setVote(updatedReview.getVote());
+        gameService.updateVote(updatedReview.getGameId(),updateVoteGame);
+        reviewRepository.save(updatedReview);
+        return updatedReview;
     }
 
     public Review deleteReview(String reviewId) throws ReviewNotFoundException {
