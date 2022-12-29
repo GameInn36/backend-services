@@ -80,7 +80,7 @@ public class UserRESTService {
         User sourceUser = userRepository.findUserById(sourceId)
                 .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + sourceId, HttpStatus.NOT_FOUND.value()));
         User destUser = userRepository.findUserById(destId)
-                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id:" + destId, HttpStatus.NOT_FOUND.value()));
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + destId, HttpStatus.NOT_FOUND.value()));
 
         if(sourceUser.getFollowing() == null)
         {
@@ -106,7 +106,7 @@ public class UserRESTService {
         User sourceUser = userRepository.findUserById(sourceId)
                 .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + sourceId, HttpStatus.NOT_FOUND.value()));
         User destUser = userRepository.findUserById(destId)
-                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id:" + destId, HttpStatus.NOT_FOUND.value()));
+                .orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + destId, HttpStatus.NOT_FOUND.value()));
 
 
         Predicate<String> destIdFilter = a->(a.equals(destId));
@@ -128,7 +128,7 @@ public class UserRESTService {
             user.setLogs(new ArrayList<>());
         }
         user.getLogs().add(log);
-        gameService.increaseLogCount(log.getGameId());
+        gameService.increaseLogCount(log.getGameId(), new Game());
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 
@@ -148,6 +148,7 @@ public class UserRESTService {
         return new ArrayList<>();
     }
 
+    //TODO:BURADA KALDIM UNIT TEST İÇİN
     public List<Game> getFavoriteGames(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){

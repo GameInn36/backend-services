@@ -14,6 +14,6 @@ public interface GameService{
     @GetMapping("/game/")
     List<Game> getAllGames(@RequestParam List<String> gameIds);
 
-    @PutMapping("/{gameId}/increaseLogCount")
-    void increaseLogCount(String gameId);
+    @PutMapping("/game/{gameId}/increaseLogCount")
+    void increaseLogCount(@PathVariable String gameId, @RequestBody Game game);
 }
