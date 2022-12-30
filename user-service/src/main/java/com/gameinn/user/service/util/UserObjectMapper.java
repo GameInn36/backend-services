@@ -1,26 +1,23 @@
 package com.gameinn.user.service.util;
 
-import com.gameinn.user.service.dto.UserCreateUpdateDTO;
+import com.gameinn.user.service.dto.UserCreateDTO;
 import com.gameinn.user.service.dto.UserReadDTO;
+import com.gameinn.user.service.dto.UserUpdateDTO;
 import com.gameinn.user.service.entity.User;
 
 public class UserObjectMapper {
-    public static User toEntity(UserCreateUpdateDTO user){
+    public static User toEntity(UserCreateDTO user){
         return new User.UserBuilder(user.getUsername(),user.getPassword(),user.getEmail())
-                .setBio(user.getBio())
-                .setProfileImage(user.getProfileImage())
                 .build();
     }
-
-    public static User mapUser(UserCreateUpdateDTO src, User dest){
+    public static User mapUserFromUpdateDTO(UserUpdateDTO src, User dest){
         dest.setEmail(src.getEmail());
-        dest.setPassword(src.getPassword());
         dest.setUsername(src.getUsername());
         dest.setBio(src.getBio());
+        dest.setLogs(src.getLogs());
         dest.setProfileImage(src.getProfileImage());
         dest.setFavoriteGames(src.getFavoriteGames());
         dest.setToPlayList(src.getToPlayList());
-        dest.setLogs(src.getLogs());
         return dest;
     }
     public static UserReadDTO toReadDTO(User user){

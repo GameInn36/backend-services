@@ -67,9 +67,9 @@ public class GameRESTController {
     }
 
     @PostMapping("/")
-    public void addGame(@RequestBody GameDTO gameDTO)
+    public Game addGame(@RequestBody GameDTO gameDTO)
     {
-        gameRESTService.addGame(gameDTO);
+        return gameRESTService.addGame(gameDTO);
     }
 
     @PostMapping("/{gameId}/vote")
@@ -89,7 +89,7 @@ public class GameRESTController {
     }
 
     @PutMapping("/{gameId}/increaseLogCount")
-    public void increaseLogCount(@PathVariable String gameId) throws GameNotFoundException {
-        gameRESTService.increaseLogCount(gameId);
+    public Game increaseLogCount(@PathVariable String gameId) throws GameNotFoundException {
+        return gameRESTService.increaseLogCount(gameId);
     }
 }

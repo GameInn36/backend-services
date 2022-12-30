@@ -216,7 +216,29 @@ class ReviewServiceApplicationTests {
 		}catch (Exception e){
 			Assertions.assertEquals(e.getMessage(),"There is no review with given id: "+review.getId());
 		}
+	}
 
+	@Test
+	void likeReviewNullListTest(){
+		Review review = new Review();
+		review.setId("mockId");
+		review.setUserId("mockUserId");
+		review.setGameId("mockGameId");
+		review.setContext("mockContext");
+		review.setVote(3);
+		review.setVoted(true);
+		review.setLikeCount(8);
+		review.setLikedUsers(null);
+		review.setDuplicateCheckVariable(review.getUserId()+review.getGameId());
+		review.setUpdatedAt(0);
+		review.setCreatedAt(0);
+
+		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.of(review));
+		try{
+			reviewRESTService.likeReview("userId","mockId");
+		}catch (Exception e){
+			Assertions.assertEquals(e.getMessage(),"There is no review with given id: "+review.getId());
+		}
 	}
 
 	@Test
@@ -265,7 +287,6 @@ class ReviewServiceApplicationTests {
 		}catch (Exception e){
 			Assertions.assertEquals(e.getMessage(),"There is no review with given id: "+ review.getId());
 		}
-
 	}
 
 	@Test
@@ -288,6 +309,75 @@ class ReviewServiceApplicationTests {
 			reviewRESTService.likeReview("mockUserId","mockId");
 		}catch (Exception e){
 			Assertions.assertEquals(e.getMessage(),"There is no review with given id: "+review.getId());
+		}
+	}
+
+	@Test
+	void unlikeReviewNullListTest(){
+		Review review = new Review();
+		review.setId("mockId");
+		review.setUserId("mockUserId");
+		review.setGameId("mockGameId");
+		review.setContext("mockContext");
+		review.setVote(3);
+		review.setVoted(true);
+		review.setLikeCount(1);
+		review.setLikedUsers(null);
+		review.setDuplicateCheckVariable(review.getUserId()+review.getGameId());
+		review.setUpdatedAt(0);
+		review.setCreatedAt(0);
+
+		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.of(review));
+		try{
+			reviewRESTService.unlikeReview("userId","mockId");
+		}catch (Exception e){
+			Assertions.assertEquals("Empty liked users list",e.getMessage());
+		}
+	}
+
+	@Test
+	void unlikeReviewEmptyListTest(){
+		Review review = new Review();
+		review.setId("mockId");
+		review.setUserId("mockUserId");
+		review.setGameId("mockGameId");
+		review.setContext("mockContext");
+		review.setVote(3);
+		review.setVoted(true);
+		review.setLikeCount(1);
+		review.setLikedUsers(new ArrayList<>());
+		review.setDuplicateCheckVariable(review.getUserId()+review.getGameId());
+		review.setUpdatedAt(0);
+		review.setCreatedAt(0);
+
+		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.of(review));
+		try{
+			reviewRESTService.unlikeReview("userId","mockId");
+		}catch (Exception e){
+			Assertions.assertEquals("Empty liked users list",e.getMessage());
+		}
+	}
+
+	@Test
+	void unlikeReviewInvalidUserTest(){
+		Review review = new Review();
+		review.setId("mockId");
+		review.setUserId("mockUserId");
+		review.setGameId("mockGameId");
+		review.setContext("mockContext");
+		review.setVote(3);
+		review.setVoted(true);
+		review.setLikeCount(1);
+		review.setLikedUsers(Arrays.asList("id1","id2"));
+		review.setDuplicateCheckVariable(review.getUserId()+review.getGameId());
+		review.setUpdatedAt(0);
+		review.setCreatedAt(0);
+
+		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.of(review));
+		try{
+			reviewRESTService.unlikeReview("userId","mockId");
+		}catch (Exception e){
+			Assertions.assertEquals("The user did not like the review before",e.getMessage());
 		}
 	}
 
@@ -407,7 +497,7 @@ class ReviewServiceApplicationTests {
 			review.setUpdatedAt(0);
 			review.setCreatedAt(0);
 			reviews.add(review);
-			if(i%3 != 0 && friendReviewsResult.size() != 3){
+			if(i%3 != 0 && friendReviewsResult.size() != 5){
 				ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
 				reviewReadDTO.setReview(review);
 				switch (i%3){
@@ -443,9 +533,19 @@ class ReviewServiceApplicationTests {
 		reviewReadDTO3.setReview(reviews.get(2));
 		reviewReadDTO3.setUser(user2);
 		reviewReadDTO3.setGame(game0);
+		ReviewReadDTO reviewReadDTO4 = new ReviewReadDTO();
+		reviewReadDTO4.setReview(reviews.get(3));
+		reviewReadDTO4.setUser(user0);
+		reviewReadDTO4.setGame(game1);
+		ReviewReadDTO reviewReadDTO5 = new ReviewReadDTO();
+		reviewReadDTO5.setReview(reviews.get(4));
+		reviewReadDTO5.setUser(user1);
+		reviewReadDTO5.setGame(game0);
 		mostPopularReviewsResult.add(reviewReadDTO1);
 		mostPopularReviewsResult.add(reviewReadDTO2);
 		mostPopularReviewsResult.add(reviewReadDTO3);
+		mostPopularReviewsResult.add(reviewReadDTO4);
+		mostPopularReviewsResult.add(reviewReadDTO5);
 
 		Mockito.when(userService.getUserById("user0")).thenReturn(user0);
 		Mockito.when(userService.getUserById("user1")).thenReturn(user1);
@@ -458,11 +558,11 @@ class ReviewServiceApplicationTests {
 			ReviewPageDTO result = reviewRESTService.getReviewPage("user0");
 
 			Assertions.assertEquals(user0,result.getMostPopularReviews().get(0).getUser());
-			Assertions.assertEquals(3,result.getFriendReviews().size());
+			Assertions.assertEquals(5,result.getFriendReviews().size());
 			Assertions.assertEquals(friendReviewsResult,result.getFriendReviews());
 			Assertions.assertEquals(mostPopularReviewsResult,result.getMostPopularReviews());
 		}catch (Exception e) {
-
+			Assertions.assertEquals("",e.getMessage());
 		}
 	}
 
@@ -492,7 +592,7 @@ class ReviewServiceApplicationTests {
 			Review result = reviewRESTService.deleteReview("mockId");
 			Assertions.assertEquals(review,result);
 		}catch (Exception e){
-
+			Assertions.assertEquals("",e.getMessage());
 		}
 	}
 

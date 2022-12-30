@@ -1,11 +1,9 @@
 package com.gameinn.user.service.service;
 
 import com.gameinn.user.service.dataTypes.GameLog;
-import com.gameinn.user.service.dto.GameLogDTO;
-import com.gameinn.user.service.dto.UserCreateUpdateDTO;
-import com.gameinn.user.service.dto.UserProfilePageDTO;
-import com.gameinn.user.service.dto.UserReadDTO;
+import com.gameinn.user.service.dto.*;
 import com.gameinn.user.service.entity.User;
+import com.gameinn.user.service.exception.DuplicateGameLogException;
 import com.gameinn.user.service.exception.UserNotFoundException;
 import com.gameinn.user.service.feignClient.GameService;
 import com.gameinn.user.service.model.Game;
@@ -37,7 +35,7 @@ public class UserRESTService {
         return userRepository.findAll().stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
-    public UserReadDTO addUser(UserCreateUpdateDTO newUser){
+    public UserReadDTO addUser(UserCreateDTO newUser){
         return UserObjectMapper.toReadDTO(userRepository.insert(UserObjectMapper.toEntity(newUser)));
     }
 
@@ -51,8 +49,8 @@ public class UserRESTService {
         return ((List<User>) userRepository.findAllById(userIds)).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
-    public UserReadDTO getUserByEmailAndPassword(UserCreateUpdateDTO userCreateUpdateDTO){
-        User user = userRepository.findUserByEmailAndPassword(userCreateUpdateDTO.getEmail(), userCreateUpdateDTO.getPassword())
+    public UserReadDTO getUserByEmailAndPassword(UserCreateDTO userCreateDTO){
+        User user = userRepository.findUserByEmailAndPassword(userCreateDTO.getEmail(), userCreateDTO.getPassword())
                 .orElseThrow(() -> new UserNotFoundException("There is no user matches with given email-password", HttpStatus.NOT_FOUND.value()));
         return UserObjectMapper.toReadDTO(user);
     }
@@ -61,9 +59,15 @@ public class UserRESTService {
         return userRepository.findByUsernameContainingIgnoreCaseOrderByUsername(userName).stream().map(UserObjectMapper::toReadDTO).collect(Collectors.toList());
     }
 
-    public UserReadDTO updateUser(String userId, UserCreateUpdateDTO userCreateUpdateDTO){
-        User user = UserObjectMapper.mapUser(userCreateUpdateDTO, userRepository
+    public UserReadDTO updateUser(String userId, UserUpdateDTO userUpdateDTO){
+        User user = UserObjectMapper.mapUserFromUpdateDTO(userUpdateDTO, userRepository
                 .findUserById(userId).orElseThrow(() ->new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value())));
+        return UserObjectMapper.toReadDTO(userRepository.save(user));
+    }
+
+    public UserReadDTO updateUserPassword(String userId, String updatedPassword){
+        User user = userRepository.findUserById(userId).orElseThrow(() ->new UserNotFoundException("There is no user matches with given userId", HttpStatus.NOT_FOUND.value()));
+        user.setPassword(updatedPassword);
         return UserObjectMapper.toReadDTO(userRepository.save(user));
     }
 
@@ -127,6 +131,10 @@ public class UserRESTService {
         if(user.getLogs() == null){
             user.setLogs(new ArrayList<>());
         }
+        List<String> gameIds = user.getLogs().stream().map(GameLog::getGameId).collect(Collectors.toList());
+        if(gameIds.contains(log.getGameId())){
+            throw new DuplicateGameLogException("You cannot add more than one log to a game",HttpStatus.NOT_ACCEPTABLE.value());
+        }
         user.getLogs().add(log);
         gameService.increaseLogCount(log.getGameId(), new Game());
         return UserObjectMapper.toReadDTO(userRepository.save(user));
@@ -148,7 +156,6 @@ public class UserRESTService {
         return new ArrayList<>();
     }
 
-    //TODO:BURADA KALDIM UNIT TEST İÇİN
     public List<Game> getFavoriteGames(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
@@ -156,7 +163,6 @@ public class UserRESTService {
         }
         return new ArrayList<>();
     }
-
     public List<GameLogDTO> getGameLogs(String userId){
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         if(user.getLogs() != null && user.getLogs().size() != 0){
@@ -183,6 +189,8 @@ public class UserRESTService {
         UserProfilePageDTO userProfilePageDTO = new UserProfilePageDTO();
         User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
         userProfilePageDTO.setUser(UserObjectMapper.toReadDTO(user));
+        userProfilePageDTO.setFavoriteGames(new ArrayList<>());
+        userProfilePageDTO.setRecentlyPlayedGames(new ArrayList<>());
         if(user.getLogs() != null && user.getLogs().size() != 0){
             int toIndex = Math.min(user.getLogs().size(),5);
             List<String> gameIds = user.getLogs().stream().sorted(Comparator.comparingLong(GameLog::getStartDate).reversed()).map(GameLog::getGameId).collect(Collectors.toList()).subList(0,toIndex);
@@ -191,7 +199,6 @@ public class UserRESTService {
         if(user.getFavoriteGames() != null && user.getFavoriteGames().size() != 0){
             userProfilePageDTO.setFavoriteGames(gameService.getAllGames(user.getFavoriteGames()));
         }
-
         return userProfilePageDTO;
     }
 }

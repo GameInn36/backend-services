@@ -37,9 +37,9 @@ public class GameRESTService {
         this.userService = userService;
     }
 
-    public void addGame(GameDTO gameDTO)
+    public Game addGame(GameDTO gameDTO)
     {
-        gameRepository.insert(GameObjectMapper.toEntity(gameDTO));
+        return gameRepository.insert(GameObjectMapper.toEntity(gameDTO));
     }
 
     public Game getGame(String gameId) throws GameNotFoundException {
@@ -115,7 +115,7 @@ public class GameRESTService {
 
     public DisplayGamesDTO getDisplayGamesPage(String userId) throws GameNotFoundException {
         DisplayGamesDTO displayGamesDTO = new DisplayGamesDTO();
-        List<Game> games = gameRepository.findAll().stream().sorted(Comparator.comparingLong(Game::getFirst_release_date)).collect(Collectors.toList());
+        List<Game> games = gameRepository.findAll().stream().sorted(Comparator.comparingLong(Game::getFirst_release_date).reversed()).collect(Collectors.toList());
         displayGamesDTO.setNewGames(games.subList(0,5));
         displayGamesDTO.setMostPopularGames(games.stream().sorted(Comparator.comparingDouble(Game::getVote).reversed()).collect(Collectors.toList()).subList(0,5));
         User requestOwner = userService.getUserById(userId);
@@ -165,9 +165,9 @@ public class GameRESTService {
         return gameRepository.save(game);
     }
 
-    public void increaseLogCount(String gameId) throws GameNotFoundException {
+    public Game increaseLogCount(String gameId) throws GameNotFoundException {
         Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
         game.setLogCount(game.getLogCount()+1);
-        gameRepository.save(game);
+        return gameRepository.save(game);
     }
 }

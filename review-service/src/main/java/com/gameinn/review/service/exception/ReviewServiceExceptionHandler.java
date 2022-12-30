@@ -18,6 +18,12 @@ public class ReviewServiceExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorResponseDTO> handleException(ReviewLikeUnlikeException e)
+    {
+        return new ResponseEntity<>(new ErrorResponseDTO(new Date(), e.getStatus(), e.getClass().getSimpleName(), e.getMessage()), HttpStatus.valueOf(e.getStatus()));
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorResponseDTO> handleException(ReviewPageException e)
     {
         return new ResponseEntity<>(new ErrorResponseDTO(new Date(), e.getStatus(), e.getClass().getSimpleName(), e.getMessage()), HttpStatus.valueOf(e.getStatus()));

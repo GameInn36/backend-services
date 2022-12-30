@@ -1,10 +1,7 @@
 package com.gameinn.user.service.controller;
 
 import com.gameinn.user.service.dataTypes.GameLog;
-import com.gameinn.user.service.dto.GameLogDTO;
-import com.gameinn.user.service.dto.UserCreateUpdateDTO;
-import com.gameinn.user.service.dto.UserProfilePageDTO;
-import com.gameinn.user.service.dto.UserReadDTO;
+import com.gameinn.user.service.dto.*;
 import com.gameinn.user.service.exception.InvalidCredentialsException;
 import com.gameinn.user.service.model.Game;
 import com.gameinn.user.service.service.UserRESTService;
@@ -84,13 +81,13 @@ public class UserController {
     }
 
     @PostMapping("/validate")
-    public UserReadDTO validateUser(@RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
-        return userRESTService.getUserByEmailAndPassword(userCreateUpdateDTO);
+    public UserReadDTO validateUser(@RequestBody UserCreateDTO userCreateDTO){
+        return userRESTService.getUserByEmailAndPassword(userCreateDTO);
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addUser(@RequestBody UserCreateUpdateDTO newUser){
-        Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(newUser);
+    public ResponseEntity<?> addUser(@RequestBody UserCreateDTO newUser){
+        Set<ConstraintViolation<UserCreateDTO>> violations = validator.validate(newUser);
         if(!violations.isEmpty()){
             throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
@@ -103,12 +100,21 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public UserReadDTO updateUser(@PathVariable String userId, @RequestBody UserCreateUpdateDTO userCreateUpdateDTO){
-        Set<ConstraintViolation<UserCreateUpdateDTO>> violations = validator.validate(userCreateUpdateDTO);
+    public UserReadDTO updateUser(@PathVariable String userId, @RequestBody UserUpdateDTO userUpdateDTO){
+        Set<ConstraintViolation<UserUpdateDTO>> violations = validator.validate(userUpdateDTO);
         if(!violations.isEmpty()){
             throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
         }
-        return userRESTService.updateUser(userId, userCreateUpdateDTO);
+        return userRESTService.updateUser(userId, userUpdateDTO);
+    }
+
+    @PutMapping("/{userId}/password")
+    public UserReadDTO updateUserPassword(@PathVariable String userId, @RequestBody UserUpdatePasswordDTO userUpdatePasswordDTO){
+        Set<ConstraintViolation<UserUpdatePasswordDTO>> violations = validator.validate(userUpdatePasswordDTO);
+        if(!violations.isEmpty()){
+            throw new InvalidCredentialsException(violations.stream().findFirst().get().getMessage(), HttpStatus.NOT_ACCEPTABLE.value());
+        }
+        return userRESTService.updateUserPassword(userId, userUpdatePasswordDTO.getPassword());
     }
 
     @PutMapping("/follow/{userId}")

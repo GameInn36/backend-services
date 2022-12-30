@@ -20,4 +20,5 @@ public class Game {
     private float vote;
     private int voteCount;
     private long first_release_date;
+    private int logCount;
 }

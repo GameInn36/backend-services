@@ -4,6 +4,7 @@ import com.gameinn.review.service.dto.ReviewCreateUpdateDTO;
 import com.gameinn.review.service.dto.ReviewPageDTO;
 import com.gameinn.review.service.dto.ReviewReadDTO;
 import com.gameinn.review.service.entity.Review;
+import com.gameinn.review.service.exception.ReviewLikeUnlikeException;
 import com.gameinn.review.service.exception.ReviewNotFoundException;
 import com.gameinn.review.service.exception.ReviewPageException;
 import com.gameinn.review.service.feignClient.GameService;
@@ -40,8 +41,7 @@ public class ReviewRESTService {
         Game gameVoteDTO = new Game();
         gameVoteDTO.setVote(newReview.getVote());
         gameService.updateVote(gameId, gameVoteDTO);
-        Review result = reviewRepository.insert(newReview);
-        return result;
+        return reviewRepository.insert(newReview);
     }
 
     public List<Review> getAllReviews(){
@@ -80,7 +80,7 @@ public class ReviewRESTService {
         if(reviews.size() == 0){
             throw new ReviewPageException("There are no reviews!",HttpStatus.NOT_FOUND.value());
         }
-        int toIndex = Math.min(reviews.size(), 3);
+        int toIndex = Math.min(reviews.size(), 5);
         List<Review> mostPopularReviews = reviews.subList(0,toIndex);
         ReviewPageDTO reviewPageDTO = new ReviewPageDTO();
         reviewPageDTO.setFriendReviews(new ArrayList<>());
@@ -94,7 +94,7 @@ public class ReviewRESTService {
         }
         if(requestOwner.getFollowing() != null){
             reviews = reviews.stream().filter((review -> requestOwner.getFollowing().contains(review.getUserId()))).sorted(Comparator.comparingLong(Review::getCreatedAt).reversed()).collect(Collectors.toList());
-            toIndex = Math.min(reviews.size(), 3);
+            toIndex = Math.min(reviews.size(), 5);
             List<Review> friendReviews = reviews.subList(0,toIndex);
             for (Review review: friendReviews) {
                 ReviewReadDTO reviewReadDTO = new ReviewReadDTO();
@@ -138,6 +138,9 @@ public class ReviewRESTService {
     public void likeReview(String userId, String reviewId) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
+        if(review.getLikedUsers() == null){
+            review.setLikedUsers(new ArrayList<>());
+        }
         review.getLikedUsers().add(userId);
         review.setLikeCount(review.getLikedUsers().size());
         reviewRepository.save(review);
@@ -146,6 +149,12 @@ public class ReviewRESTService {
     public void unlikeReview(String userId, String reviewId) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
+        if(review.getLikedUsers() == null || review.getLikedUsers().size() == 0){
+            throw new ReviewLikeUnlikeException("Empty liked users list", HttpStatus.NOT_ACCEPTABLE.value());
+        }
+        if(!review.getLikedUsers().contains(userId)){
+            throw new ReviewLikeUnlikeException("The user did not like the review before",HttpStatus.NOT_ACCEPTABLE.value());
+        }
         review.getLikedUsers().remove(userId);
         review.setLikeCount(review.getLikedUsers().size());
         reviewRepository.save(review);

@@ -39,6 +39,7 @@ public class Game {
         this.voteCount = gameBuilder.voteCount;
         this.publisher = gameBuilder.publisher;
         this.first_release_date = gameBuilder.first_release_date;
+        this.logCount = gameBuilder.logCount;
     }
 
     public static class GameBuilder{

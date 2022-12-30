@@ -1,8 +1,7 @@
 package com.gameinn.user.service;
 
 import com.gameinn.user.service.dataTypes.GameLog;
-import com.gameinn.user.service.dto.UserCreateUpdateDTO;
-import com.gameinn.user.service.dto.UserReadDTO;
+import com.gameinn.user.service.dto.*;
 import com.gameinn.user.service.entity.User;
 import com.gameinn.user.service.feignClient.GameService;
 import com.gameinn.user.service.model.Game;
@@ -80,7 +79,7 @@ class UserServiceApplicationTests {
 
 		Mockito.when(userRepository.insert(any(User.class))).thenReturn(user);
 
-		UserReadDTO result = userRESTService.addUser(new UserCreateUpdateDTO());
+		UserReadDTO result = userRESTService.addUser(new UserCreateDTO());
 
 		Assertions.assertNotNull(result);
 	}
@@ -172,7 +171,7 @@ class UserServiceApplicationTests {
 
 		Mockito.when(userRepository.findUserByEmailAndPassword("user@gameinn.com","userpassword")).thenReturn(Optional.of(user));
 
-		UserCreateUpdateDTO request = new UserCreateUpdateDTO();
+		UserCreateDTO request = new UserCreateDTO();
 		request.setPassword("userpassword");
 		request.setEmail("user@gameinn.com");
 		UserReadDTO result = userRESTService.getUserByEmailAndPassword(request);
@@ -185,7 +184,7 @@ class UserServiceApplicationTests {
 
 		Mockito.when(userRepository.findUserByEmailAndPassword("user@gameinn.com","userpassword")).thenReturn(Optional.empty());
 
-		UserCreateUpdateDTO request = new UserCreateUpdateDTO();
+		UserCreateDTO request = new UserCreateDTO();
 		request.setPassword("userpassword");
 		request.setEmail("user@gameinn.com");
 		try{
@@ -222,10 +221,9 @@ class UserServiceApplicationTests {
 				.setToPlayList(toPlayList)
 				.build();
 
-		UserCreateUpdateDTO updatedUser = new UserCreateUpdateDTO();
+		UserUpdateDTO updatedUser = new UserUpdateDTO();
 		updatedUser.setEmail("updated@gameinn.com");
 		updatedUser.setUsername("username");
-		updatedUser.setPassword("password");
 		updatedUser.setFavoriteGames(favoriteGames);
 		updatedUser.setLogs(new ArrayList<>());
 		updatedUser.setBio("updatedBio");
@@ -250,17 +248,48 @@ class UserServiceApplicationTests {
 	}
 
 	@Test
-	void updateInvalidUser(){
+	void updateInvalidUserTest(){
 		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
 		try{
-			userRESTService.updateUser("userId",new UserCreateUpdateDTO());
+			userRESTService.updateUser("userId",new UserUpdateDTO());
 		}catch (Exception e){
 			Assertions.assertEquals("There is no user matches with given userId",e.getMessage());
 		}
 	}
 
 	@Test
-	void getToPlayList(){
+	void updateUserPasswordTest(){
+		User oldUser = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.build();
+
+		User newUser = new User.UserBuilder("username","newPassword","email")
+				.setId("userId")
+				.build();
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.ofNullable(oldUser));
+		Mockito.when(userRepository.save(newUser)).thenReturn(newUser);
+		try{
+			UserReadDTO result = userRESTService.updateUserPassword("userId","newPassword");
+			assert oldUser != null;
+			Assertions.assertEquals(oldUser.getId(),result.getId());
+			Assertions.assertEquals(oldUser.getUsername(),result.getUsername());
+			Assertions.assertEquals(oldUser.getEmail(),result.getEmail());
+		}catch (Exception e){
+			Assertions.assertEquals("There is no user matches with given userId",e.getMessage());
+		}
+	}
+	@Test
+	void updateInvalidUserPasswordTest(){
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
+		try{
+			userRESTService.updateUserPassword("userId","newPassword");
+		}catch (Exception e){
+			Assertions.assertEquals("There is no user matches with given userId",e.getMessage());
+		}
+	}
+
+	@Test
+	void getToPlayListTest(){
 		User user = new User.UserBuilder("username","password","email@gameinn.com")
 				.setToPlayList(Arrays.asList("g1","g2"))
 				.setId("userId")
@@ -284,7 +313,7 @@ class UserServiceApplicationTests {
 	}
 
 	@Test
-	void getToPlayListInvalid(){
+	void getToPlayListInvalidTest(){
 		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
 		try{
 			userRESTService.getToPlayList("userId");
@@ -438,6 +467,25 @@ class UserServiceApplicationTests {
 	}
 
 	@Test
+	void addDuplicateGameLog(){
+		User user = new User.UserBuilder("username","password","email@gameinn.com")
+				.setId("userId")
+				.setLogs(new ArrayList<>())
+				.build();
+		GameLog gameLog = new GameLog();
+		gameLog.setGameId("gameId");
+		user.getLogs().add(gameLog);
+
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+
+		try{
+			userRESTService.addGameLog("userId",gameLog);
+		}catch (Exception e){
+			Assertions.assertEquals("You cannot add more than one log to a game",e.getMessage());
+		}
+	}
+
+	@Test
 	void addGameLogInvalidUserId(){
 		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
 		try{
@@ -524,4 +572,197 @@ class UserServiceApplicationTests {
 			Assertions.assertEquals("There is no user matches with given id: userId",e.getMessage());
 		}
 	}
+
+	@Test
+	void getFavoriteGames(){
+		List<String> gameIds = Arrays.asList("g0","g1","g2");
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.setFavoriteGames(gameIds)
+				.build();
+
+		List<Game> games = new ArrayList<>();
+		for(int i = 0; i < 3; i++){
+			Game game = new Game();
+			game.setId("g" + i);
+			game.setName("game"+i);
+			games.add(game);
+		}
+
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+		Mockito.when(gameService.getAllGames(gameIds)).thenReturn(games);
+
+		List<Game> result = userRESTService.getFavoriteGames("userId");
+		Assertions.assertEquals(result,games);
+	}
+
+	@Test
+	void getEmptyFavoriteGames(){
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.build();
+
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+
+		List<Game> result = userRESTService.getFavoriteGames("userId");
+		Assertions.assertEquals(result,new ArrayList<>());
+	}
+
+	@Test
+	void getFavoriteGamesInvalidUserTest(){
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
+		try{
+			userRESTService.getFavoriteGames("userId");
+		}catch (Exception e){
+			Assertions.assertEquals("There is no user matches with given id: userId",e.getMessage());
+		}
+	}
+
+	@Test
+	void getGameLogs(){
+		List<GameLog> logs = new ArrayList<>();
+		List<Game> games = new ArrayList<>();
+		List<GameLogDTO> expected = new ArrayList<>();
+		List<String> gameIds = Arrays.asList("g0","g1","g2","g3","g4");
+		for(int i = 0; i < 5; i++){
+			GameLog gameLog = new GameLog();
+			gameLog.setGameId("g"+i);
+			logs.add(gameLog);
+
+			Game game = new Game();
+			game.setId("g"+i);
+			game.setName("game"+i);
+			games.add(game);
+
+			GameLogDTO gameLogDTO = new GameLogDTO();
+			gameLogDTO.setGame(game);
+			gameLogDTO.setGameLog(gameLog);
+			expected.add(gameLogDTO);
+		}
+
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.setLogs(logs)
+				.build();
+
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+		Mockito.when(gameService.getAllGames(gameIds)).thenReturn(games);
+
+		List<GameLogDTO> result = userRESTService.getGameLogs("userId");
+		Assertions.assertEquals(expected,result);
+	}
+
+	@Test
+	void getGameLogsEmptyTest(){
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.build();
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+
+		List<GameLogDTO> result = userRESTService.getGameLogs("userId");
+
+		Assertions.assertEquals(result,new ArrayList<>());
+	}
+	@Test
+	void getGameLogsInvalidUserTest(){
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
+		try{
+			userRESTService.getGameLogs("userId");
+		}catch (Exception e){
+			Assertions.assertEquals("There is no user matches with given id: userId",e.getMessage());
+		}
+	}
+
+	@Test
+	void getProfilePageEmptyLogsTest(){
+		List<String> favoriteGameIds = Arrays.asList("g0","g3");
+		List<Game> favoriteGames = new ArrayList<>();
+		for(int i = 0; i < 5; i++){
+			Game game = new Game();
+			game.setId("g"+i);
+			game.setName("game"+i);
+			if(i == 0 || i == 3){
+				favoriteGames.add(game);
+			}
+		}
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.setFavoriteGames(favoriteGameIds)
+				.build();
+		UserReadDTO expectedUser = new UserReadDTO();
+		expectedUser.setId("userId");
+		expectedUser.setUsername("username");
+		expectedUser.setEmail("email");
+		expectedUser.setFavoriteGames(favoriteGameIds);
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+		Mockito.when(gameService.getAllGames(favoriteGameIds)).thenReturn(favoriteGames);
+
+		UserProfilePageDTO result = userRESTService.getProfilePage("userId");
+
+		Assertions.assertEquals(expectedUser,result.getUser());
+		Assertions.assertEquals(new ArrayList<>(),result.getRecentlyPlayedGames());
+		Assertions.assertEquals(favoriteGames,result.getFavoriteGames());
+	}
+
+	@Test
+	void getProfilePageEmptyFavoriteGamesTest(){
+		List<GameLog> gameLogs = new ArrayList<>();
+		List<Game> games = new ArrayList<>();
+		for(int i = 0; i < 5; i++){
+			GameLog gameLog = new GameLog();
+			gameLog.setGameId("g"+i);
+			gameLog.setStartDate((long)i);
+			gameLogs.add(gameLog);
+
+			Game game = new Game();
+			game.setId("g"+i);
+			game.setName("game"+i);
+			games.add(game);
+		}
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.setLogs(gameLogs)
+				.build();
+		UserReadDTO expectedUser = new UserReadDTO();
+		expectedUser.setId("userId");
+		expectedUser.setLogs(gameLogs);
+		expectedUser.setUsername("username");
+		expectedUser.setEmail("email");
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+		Mockito.when(gameService.getAllGames(Arrays.asList("g4","g3","g2","g1","g0"))).thenReturn(games);
+
+		UserProfilePageDTO result = userRESTService.getProfilePage("userId");
+
+		Assertions.assertEquals(expectedUser,result.getUser());
+		Assertions.assertEquals(games,result.getRecentlyPlayedGames());
+		Assertions.assertEquals(new ArrayList<>(),result.getFavoriteGames());
+	}
+
+	@Test
+	void getProfilePageEmptyLogsAndEmptyFavoriteGamesTest(){
+		User user = new User.UserBuilder("username","password","email")
+				.setId("userId")
+				.build();
+		UserReadDTO expectedUser = new UserReadDTO();
+		expectedUser.setId("userId");
+		expectedUser.setUsername("username");
+		expectedUser.setEmail("email");
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.of(user));
+
+		UserProfilePageDTO result = userRESTService.getProfilePage("userId");
+
+		Assertions.assertEquals(expectedUser,result.getUser());
+		Assertions.assertEquals(new ArrayList<>(),result.getRecentlyPlayedGames());
+		Assertions.assertEquals(new ArrayList<>(),result.getFavoriteGames());
+	}
+	@Test
+	void getProfilePageInvalidUserTest(){
+		Mockito.when(userRepository.findUserById("userId")).thenReturn(Optional.empty());
+		try{
+			userRESTService.getProfilePage("userId");
+		}catch (Exception e){
+			Assertions.assertEquals("There is no user matches with given id: userId",e.getMessage());
+		}
+	}
+
 }
