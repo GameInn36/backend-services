@@ -130,4 +130,13 @@ public class UserController {
         String requestOwnerId = JwtUtil.getSubject(JwtUtil.getToken(request));
         return userRESTService.unfollowUser(requestOwnerId, userId);
     }
+
+    @DeleteMapping("/{userId}")
+    public UserReadDTO deleteUser(@PathVariable String userId){
+        return userRESTService.deleteUser(userId);
+    }
+    @DeleteMapping("/logs")
+    public boolean deleteLogsWithGameId(@RequestParam String gameId){
+        return userRESTService.deleteLogsWithGameId(gameId);
+    }
 }

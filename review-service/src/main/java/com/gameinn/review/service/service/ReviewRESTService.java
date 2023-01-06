@@ -125,14 +125,27 @@ public class ReviewRESTService {
         return updatedReview;
     }
 
-    public Review deleteReview(String reviewId) throws ReviewNotFoundException {
+    public Review deleteReview(String reviewId, boolean r) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("There is no review with given id: "+reviewId, HttpStatus.NOT_FOUND.value()));
-        Game gameVoteDTO = new Game();
-        gameVoteDTO.setVote(-review.getVote());
-        gameService.updateVote(review.getGameId(), gameVoteDTO);
+        if(r){
+            Game gameVoteDTO = new Game();
+            gameVoteDTO.setVote(-review.getVote());
+            gameService.updateVote(review.getGameId(), gameVoteDTO);
+        }
         reviewRepository.deleteById(reviewId);
         return review;
+    }
+
+    public List<Review> deleteReviewsByUserId(String userId){
+        List<Review> reviews = reviewRepository.getReviewsByUserIdOrderByLikeCountDesc(userId);
+        for (Review review: reviews) {
+            Game gameVoteDTO = new Game();
+            gameVoteDTO.setVote(-review.getVote());
+            gameService.updateVote(review.getGameId(), gameVoteDTO);
+            reviewRepository.deleteById(review.getId());
+        }
+        return reviews;
     }
 
     public void likeReview(String userId, String reviewId) throws ReviewNotFoundException {

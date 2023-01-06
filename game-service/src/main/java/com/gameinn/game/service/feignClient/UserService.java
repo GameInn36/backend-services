@@ -2,6 +2,7 @@ package com.gameinn.game.service.feignClient;
 
 import com.gameinn.game.service.model.User;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,4 +19,7 @@ public interface UserService {
 
     @GetMapping("/user/")
     List<User> getAllUsers(@RequestParam(required = false) List<String> userIds);
+
+    @DeleteMapping("/logs")
+    boolean deleteUserLogsWithGameId(@RequestParam String gameId);
 }

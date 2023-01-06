@@ -31,7 +31,7 @@ class AuthenticationServiceTests {
 		MockitoAnnotations.openMocks(this);
 	}
 	@Test
-	void authenticateUser(){
+	void authenticateUserTest(){
 		User user = new User();
 		user.setEmail("test@gameinn.com");
 		user.setId("test");

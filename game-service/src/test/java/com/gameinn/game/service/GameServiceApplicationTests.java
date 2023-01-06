@@ -316,6 +316,7 @@ class GameServiceApplicationTests {
 					.setUpdatedAt(reviews.get(i).getUpdatedAt())
 					.setCreatedAt(reviews.get(i).getCreatedAt())
 					.setUser(users.get(i))
+					.setLikedUsers(reviews.get(i).getLikedUsers())
 					.build();
 			allGameReviews.add(gamePageReview);
 		}
@@ -409,6 +410,7 @@ class GameServiceApplicationTests {
 					.setUpdatedAt(reviews.get(i).getUpdatedAt())
 					.setCreatedAt(reviews.get(i).getCreatedAt())
 					.setUser(users.get(i))
+					.setLikedUsers(reviews.get(i).getLikedUsers())
 					.build();
 			allGameReviews.add(gamePageReview);
 		}
@@ -559,6 +561,38 @@ class GameServiceApplicationTests {
 			Assertions.assertEquals(expected,result);
 		}catch (Exception e){
 			Assertions.assertEquals("",e.getMessage());
+		}
+	}
+
+	@Test
+	void deleteGameTest(){
+		Game game = new Game.GameBuilder("name")
+				.setId("gameId")
+				.setId("gameId")
+				.build();
+
+		Mockito.when(gameRepository.findById("gameId")).thenReturn(Optional.ofNullable(game));
+		Mockito.when(reviewService.getReviewsByGameId("gameId")).thenReturn(new ArrayList<>());
+
+		try{
+			Game result = gameRESTService.deleteGame("gameId");
+			Assertions.assertEquals(game,result);
+		}catch (Exception e){
+			Assertions.assertEquals("There is no game with given id: gameId",e.getMessage());
+		}
+
+	}
+	@Test
+	void deleteInvalidGameTest(){
+		Game game = new Game.GameBuilder("name").build();
+		Mockito.when(gameRepository.findById("gameId")).thenReturn(Optional.empty());
+		Mockito.when(reviewService.getReviewsByGameId("gameId")).thenReturn(new ArrayList<>());
+
+		try{
+			Game result = gameRESTService.deleteGame("gameId");
+			Assertions.assertEquals(game,result);
+		}catch (Exception e){
+			Assertions.assertEquals("There is no game with given id: gameId",e.getMessage());
 		}
 	}
 }

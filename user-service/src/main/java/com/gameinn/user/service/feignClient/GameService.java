@@ -16,4 +16,7 @@ public interface GameService{
 
     @PutMapping("/game/{gameId}/increaseLogCount")
     void increaseLogCount(@PathVariable String gameId, @RequestBody Game game);
+
+    @PutMapping("/game/{gameId}/decreaseLogCount")
+    void decreaseLogCount(@PathVariable String gameId, @RequestBody Game game);
 }

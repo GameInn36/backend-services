@@ -6,6 +6,7 @@ import com.gameinn.user.service.entity.User;
 import com.gameinn.user.service.exception.DuplicateGameLogException;
 import com.gameinn.user.service.exception.UserNotFoundException;
 import com.gameinn.user.service.feignClient.GameService;
+import com.gameinn.user.service.feignClient.ReviewService;
 import com.gameinn.user.service.model.Game;
 import com.gameinn.user.service.repository.UserRepository;
 import com.gameinn.user.service.util.UserObjectMapper;
@@ -24,11 +25,13 @@ public class UserRESTService {
 
     private final UserRepository userRepository;
     private final GameService gameService;
+    private final ReviewService reviewService;
 
     @Autowired
-    UserRESTService(UserRepository userRepository, GameService gameService){
+    UserRESTService(UserRepository userRepository, GameService gameService, ReviewService reviewService){
         this.userRepository = userRepository;
         this.gameService = gameService;
+        this.reviewService = reviewService;
     }
 
     public List<UserReadDTO> getAllUsers(){
@@ -200,5 +203,38 @@ public class UserRESTService {
             userProfilePageDTO.setFavoriteGames(gameService.getAllGames(user.getFavoriteGames()));
         }
         return userProfilePageDTO;
+    }
+
+    public UserReadDTO deleteUser(String userId){
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new UserNotFoundException("There is no user matches with given id: " + userId, HttpStatus.NOT_FOUND.value()));
+        if(user.getLogs() != null && user.getLogs().size() != 0){
+            for (GameLog log: user.getLogs()) {
+                gameService.decreaseLogCount(log.getGameId(),new Game());
+            }
+        }
+        reviewService.deleteReviewsByUserId(user.getId());
+        List<User> users = userRepository.findAll();
+        for (User userit: users) {
+            if(userit.getFollowers().contains(user.getId())){
+                userit.getFollowers().remove(user.getId());
+                userRepository.save(userit);
+            }
+        }
+        return UserObjectMapper.toReadDTO(user);
+    }
+    public boolean deleteLogsWithGameId(String gameId){
+        List<User> users = userRepository.findAll();
+        for (User user:users) {
+            if(user.getLogs() != null && user.getLogs().size() != 0){
+                for (GameLog log: user.getLogs()) {
+                    if(log.getGameId().equals(gameId)){
+                        user.getLogs().remove(log);
+                        break;
+                    }
+                }
+            }
+            userRepository.save(user);
+        }
+        return true;
     }
 }

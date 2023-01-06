@@ -83,7 +83,12 @@ public class ReviewRESTController {
     }
 
     @DeleteMapping("/{review_id}")
-    public Review deleteReview(@PathVariable("review_id") String reviewId) throws ReviewNotFoundException {
-        return reviewRESTService.deleteReview(reviewId);
+    public Review deleteReview(@PathVariable("review_id") String reviewId, @RequestParam(defaultValue = "true") boolean r) throws ReviewNotFoundException {
+        return reviewRESTService.deleteReview(reviewId,r);
+    }
+
+    @DeleteMapping("/")
+    public List<Review> deleteReviewsByUserId(@RequestParam String userId){
+        return reviewRESTService.deleteReviewsByUserId(userId);
     }
 }

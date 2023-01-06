@@ -59,9 +59,13 @@ public class GameRESTService {
     public Game deleteGame(String gameId) throws GameNotFoundException {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
+        List<Review> reviews = reviewService.getReviewsByGameId(game.getId());
+        for (Review review: reviews) {
+            reviewService.deleteReview(review.getId(),false);
+        }
+        userService.deleteUserLogsWithGameId(gameId);
         gameRepository.delete(game);
         return game;
-        //TODO reviews will be also deleted
     }
 
     public Game updateGame(String gameId, GameDTO gameDTO) throws GameNotFoundException {
@@ -98,6 +102,7 @@ public class GameRESTService {
                     .setVote(review.getVote())
                     .setVoted(review.isVoted())
                     .setLikeCount(review.getLikeCount())
+                    .setLikedUsers(review.getLikedUsers())
                     .build();
             gamePage.getReviews().add(gamePageReview);
         }
@@ -168,6 +173,12 @@ public class GameRESTService {
     public Game increaseLogCount(String gameId) throws GameNotFoundException {
         Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
         game.setLogCount(game.getLogCount()+1);
+        return gameRepository.save(game);
+    }
+
+    public Game decreaseLogCount(String gameId) throws GameNotFoundException {
+        Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameNotFoundException("There is no game with given id: "+gameId, HttpStatus.NOT_FOUND.value()));
+        game.setLogCount(game.getLogCount()-1);
         return gameRepository.save(game);
     }
 }

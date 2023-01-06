@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +18,7 @@ public class GamePageReview {
     private int likeCount;
     private long createdAt;
     private long updatedAt;
+    private List<String> likedUsers;
 
     private GamePageReview(Builder builder){
         this.id = builder.id;
@@ -26,6 +29,7 @@ public class GamePageReview {
         this.likeCount = builder.likeCount;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
+        this.likedUsers = builder.likedUsers;
     }
 
     @NoArgsConstructor
@@ -38,6 +42,7 @@ public class GamePageReview {
         private int likeCount;
         private long createdAt;
         private long updatedAt;
+        private List<String> likedUsers;
 
         public Builder setId(String id) {
             this.id = id;
@@ -76,6 +81,11 @@ public class GamePageReview {
 
         public Builder setUpdatedAt(long updatedAt) {
             this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder setLikedUsers(List<String> likedUsers) {
+            this.likedUsers = likedUsers;
             return this;
         }
 

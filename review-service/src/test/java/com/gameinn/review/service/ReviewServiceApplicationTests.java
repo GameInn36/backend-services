@@ -163,7 +163,7 @@ class ReviewServiceApplicationTests {
 	}
 
 	@Test
-	void getReviewsByGameIdandUserIdTest(){
+	void getReviewsByGameIdAndUserIdTest(){
 		List<Review> reviews = new ArrayList<>();
 		Review review = new Review();
 		review.setId("mockId");
@@ -189,7 +189,7 @@ class ReviewServiceApplicationTests {
 	}
 
 	@Test
-	void getReviewsByGameIdandUserIdInvalidTest(){
+	void getReviewsByGameIdAndUserIdInvalidTest(){
 		Mockito.when(reviewRepository.getReviewsByUserIdAndGameIdOrderByLikeCountDesc("mockUserId","mockGameId")).thenReturn(new ArrayList<>());
 		List<Review> result = reviewRESTService.getReviewsByUserIdAndGameId("mockUserId","mockGameId");
 		Assertions.assertEquals(result.size(),0);
@@ -568,7 +568,36 @@ class ReviewServiceApplicationTests {
 
 	@Test
 	void updateReviewTest(){
+		Review oldReview = new Review();
+		oldReview.setId("reviewId");
+		oldReview.setContext("oldcontext");
+		oldReview.setGameId("gameID");
+		oldReview.setUserId("userId");
+		oldReview.setCreatedAt(5L);
+		oldReview.setUpdatedAt(0L);
 
+		Review newReview = new Review();
+		newReview.setId("reviewId");
+		newReview.setContext("newcontext");
+		newReview.setGameId("gameID");
+		newReview.setUserId("userId");
+		newReview.setDuplicateCheckVariable(newReview.getUserId()+newReview.getGameId());
+		newReview.setCreatedAt(5L);
+		newReview.setUpdatedAt(0L);
+
+		ReviewCreateUpdateDTO reviewCreateUpdateDTO = new ReviewCreateUpdateDTO();
+		reviewCreateUpdateDTO.setUserId("userId");
+		reviewCreateUpdateDTO.setGameId("gameID");
+		reviewCreateUpdateDTO.setContext("newcontext");
+
+		Mockito.when(reviewRepository.findById("reviewId")).thenReturn(Optional.of(oldReview));
+		try{
+			Review result = reviewRESTService.updateReview("reviewId",reviewCreateUpdateDTO);
+			result.setUpdatedAt(0L);
+			Assertions.assertEquals(newReview,result);
+		}catch (Exception e){
+			Assertions.assertEquals("",e.getMessage());
+		}
 	}
 
 	@Test
@@ -589,7 +618,7 @@ class ReviewServiceApplicationTests {
 		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.of(review));
 
 		try{
-			Review result = reviewRESTService.deleteReview("mockId");
+			Review result = reviewRESTService.deleteReview("mockId",true);
 			Assertions.assertEquals(review,result);
 		}catch (Exception e){
 			Assertions.assertEquals("",e.getMessage());
@@ -614,7 +643,7 @@ class ReviewServiceApplicationTests {
 		Mockito.when(reviewRepository.findById("mockId")).thenReturn(Optional.empty());
 
 		try{
-			reviewRESTService.deleteReview("mockId");
+			reviewRESTService.deleteReview("mockId",true);
 		}catch (Exception e){
 			Assertions.assertEquals("There is no review with given id: "+review.getId(),e.getMessage());
 		}
