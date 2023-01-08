@@ -6,7 +6,7 @@ spring:
     name: user-service
   data:
     mongodb:
-      uri: mongodb+srv://${GAMEINN_DB_CREDENTIALS}@gameinn.cjnkrd4.mongodb.net/USERS?retryWrites=true&w=majority
+      uri: ${GAMEINN_DB_URI}
       auto-index-creation: true
 
 
