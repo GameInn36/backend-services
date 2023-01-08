@@ -6,7 +6,7 @@ spring:
     name: game-service
   data:
     mongodb:
-      uri: mongodb+srv://faruk:faruk1234@gameinn.cjnkrd4.mongodb.net/GAMES?retryWrites=true&w=majority
+      uri: mongodb+srv://${GAMEINN_DB_CREDENTIALS}@gameinn.cjnkrd4.mongodb.net/GAMES?retryWrites=true&w=majority
 
 
 feign:
