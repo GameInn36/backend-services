@@ -4,16 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDTO {
     private String name;
-    private int year;
     private String cover;
     private String summary;
-    private String[] categories;
-    private String studio;
-    private String[] platforms;
-    private long releaseDate;
+    private List<String> genres;
+    private String publisher;
+    private List<String> platforms;
+    private long first_release_date;
+    private long logCount;
 }

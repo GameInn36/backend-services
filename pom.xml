@@ -16,7 +16,6 @@
   <modules>
       <module>common-service-dependencies</module>
       <module>api-gateway</module>
-      <module>service-registry</module>
   </modules>
   <properties>
     <spring.cloud-version>2021.0.4</spring.cloud-version>

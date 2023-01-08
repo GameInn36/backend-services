@@ -10,6 +10,6 @@ import java.util.List;
 public interface GameRepository extends MongoRepository<Game,String> {
 
     List<Game> findByPlatformsContainingIgnoreCase(String[] platforms);
-    List<Game> findByStudioStartingWithIgnoreCase(String studio);
+    List<Game> findByPublisherStartingWithIgnoreCaseOrderByNameAsc(String publisher);
     List<Game> findByNameStartingWithIgnoreCaseOrderByNameAsc(String name);
 }

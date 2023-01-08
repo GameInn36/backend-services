@@ -20,6 +20,12 @@ public class UserServiceExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorResponseDTO> handle(DuplicateGameLogException e){
+        ErrorResponseDTO error = new ErrorResponseDTO(new Date(), e.getStatus(), e.getClass().getSimpleName(),e.getMessage());
+        return new ResponseEntity<>(error,HttpStatus.valueOf(e.getStatus()));
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorResponseDTO> handle(UserNotFoundException e){
         ErrorResponseDTO error = new ErrorResponseDTO(new Date(), e.getStatus(), e.getClass().getSimpleName(),e.getMessage());
         return new ResponseEntity<>(error,HttpStatus.valueOf(e.getStatus()));

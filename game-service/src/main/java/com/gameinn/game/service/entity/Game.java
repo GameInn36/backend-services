@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 
 @Document(collection = "games")
 @Data
@@ -15,42 +17,43 @@ public class Game {
     @Id
     private String id;
     private String name;
-    private int year;
     private String cover;
     private String summary;
-    private String[] categories;
-    private String studio;
-    private String[] platforms;
-    private float vote;
+    private List<String> genres;
+    private String publisher;
+    private List<String> platforms;
+    private double vote;
     private int voteCount;
-    private long releaseDate;
+    private long first_release_date;
+
+    private long logCount;
 
     private Game(GameBuilder gameBuilder){
         this.id = gameBuilder.id;
         this.name = gameBuilder.name;
-        this.year = gameBuilder.year;
         this.cover = gameBuilder.cover;
         this.summary = gameBuilder.summary;
-        this.categories = gameBuilder.categories;
-        this.studio = gameBuilder.studio;
+        this.genres = gameBuilder.genres;
         this.platforms = gameBuilder.platforms;
         this.vote = gameBuilder.vote;
         this.voteCount = gameBuilder.voteCount;
-        this.releaseDate = gameBuilder.releaseDate;
+        this.publisher = gameBuilder.publisher;
+        this.first_release_date = gameBuilder.first_release_date;
+        this.logCount = gameBuilder.logCount;
     }
 
     public static class GameBuilder{
         private String id;
         private String name;
-        private int year;
         private String cover;
         private String summary;
-        private String[] categories;
-        private String studio;
-        private String[] platforms;
-        private float vote;
+        private List<String> genres;
+        private String publisher;
+        private List<String> platforms;
+        private double vote;
         private int voteCount;
-        private long releaseDate;
+        private long first_release_date;
+        private long logCount;
 
         public GameBuilder(String name){
             this.name = name;
@@ -65,11 +68,6 @@ public class Game {
             return this;
         }
 
-        public GameBuilder setYear(int year) {
-            this.year = year;
-            return this;
-        }
-
         public GameBuilder setCover(String cover) {
             this.cover = cover;
             return this;
@@ -80,22 +78,22 @@ public class Game {
             return this;
         }
 
-        public GameBuilder setCategories(String[] categories) {
-            this.categories = categories;
+        public GameBuilder setGenres(List<String> genres) {
+            this.genres = genres;
             return this;
         }
 
-        public GameBuilder setStudio(String studio) {
-            this.studio = studio;
+        public GameBuilder setPublisher(String publisher) {
+            this.publisher = publisher;
             return this;
         }
 
-        public GameBuilder setPlatforms(String[] platforms) {
+        public GameBuilder setPlatforms(List<String> platforms) {
             this.platforms = platforms;
             return this;
         }
 
-        public GameBuilder setVote(float vote) {
+        public GameBuilder setVote(double vote) {
             this.vote = vote;
             return this;
         }
@@ -105,8 +103,13 @@ public class Game {
             return this;
         }
 
-        public GameBuilder setReleaseDate(long releaseDate) {
-            this.releaseDate = releaseDate;
+        public GameBuilder setFirst_release_date(long first_release_date) {
+            this.first_release_date = first_release_date;
+            return this;
+        }
+
+        public GameBuilder setLogCount(long logCount) {
+            this.logCount = logCount;
             return this;
         }
 
