@@ -6,7 +6,7 @@ spring:
     name: game-service
   data:
     mongodb:
-      uri: ${GAMEINN_DB_URI}
+      uri: ${GAMEINN_DB_GAMES_URI}
 
 
 feign:

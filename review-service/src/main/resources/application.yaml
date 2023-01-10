@@ -6,7 +6,7 @@ spring:
     name: review-service
   data:
     mongodb:
-      uri: ${GAMEINN_DB_URI}
+      uri: ${GAMEINN_DB_REVIEWS_URI}
       auto-index-creation: true
 
 

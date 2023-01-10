@@ -6,7 +6,7 @@ spring:
     name: user-service
   data:
     mongodb:
-      uri: ${GAMEINN_DB_URI}
+      uri: ${GAMEINN_DB_USERS_URI}
       auto-index-creation: true
 
 
